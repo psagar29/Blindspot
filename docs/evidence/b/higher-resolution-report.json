@@ -1,0 +1,412 @@
+{
+  "claimBoundary": "This report identifies blind spots under the stated simulation assumptions. It does not certify safety. No failure observed does not mean no failure exists.",
+  "contractVersion": 1,
+  "evidenceImageUrls": [
+    "https://standing-pony-711.convex.cloud/api/storage/381eb3e2-aa26-4b68-b6e3-4578c6b3ef9e"
+  ],
+  "id": "4b305fa2-c750-4876-8486-3a0e35d745a1",
+  "limitations": [
+    "Client-computed modeled results are not independently certified measurements.",
+    "Coverage measures tested route-hazard encounters, not all site surfaces or probability of safety.",
+    "Authored stress hazards are hypotheses, not photo-confirmed site infrastructure.",
+    "Text-generated fallback; source preview is generated imagery, not a site photograph. Operator confirmed visual registration with an assumed reference. Absolute dimensions remain estimated; no physical measurement is claimed.",
+    "Preset authoring: sentence selects the supported ground demonstration, not arbitrary scene reconstruction.",
+    "Two exact cables and one bulk envelope are authored stress tests, not observed infrastructure.",
+    "World reconstruction and reference scale remain estimates. Ground motion is a kinematic vertical capsule with finite braking.",
+    "Exact procedural geometry. Passive-stereo width threshold; no measured material-response claim.",
+    "Procedural development collision box. Tripo integration is incomplete; no generated Tripo visual is claimed.",
+    "Declared passive stereo approximation, not a calibrated hardware model.",
+    "Exact proxy depth and occlusion-tested cable samples. Splats are appearance only.",
+    "Projected cable width threshold uses the actual simulated raster pixels.",
+    "Opaque materials; no texture dropout or synthetic noise. Presets keep route, speed and geometry fixed."
+  ],
+  "publishedAt": "2026-09-05T20:25:01.467Z",
+  "run": {
+    "completedAt": "2026-09-05T20:22:37.809Z",
+    "config": {
+      "assumptions": [
+        "Declared passive stereo approximation, not a calibrated hardware model.",
+        "Exact proxy depth and occlusion-tested cable samples. Splats are appearance only.",
+        "Projected cable width threshold uses the actual simulated raster pixels.",
+        "Opaque materials; no texture dropout or synthetic noise. Presets keep route, speed and geometry fixed."
+      ],
+      "id": "config-4",
+      "label": "Higher resolution",
+      "modelVersion": "passive-stereo-1",
+      "presetId": "higher_resolution",
+      "sensors": [
+        {
+          "farM": 12,
+          "heightPx": 240,
+          "horizontalFovRad": 1.5707963267948966,
+          "id": "front-stereo",
+          "kind": "passive_stereo_approximation",
+          "minResolvableWidthPx": 1,
+          "mount": {
+            "orientation": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "positionM": [
+              0,
+              0.35,
+              0
+            ]
+          },
+          "nearM": 0.05,
+          "textureDropoutEnabled": false,
+          "widthPx": 320
+        }
+      ],
+      "version": 4
+    },
+    "coverage": {
+      "detectedBeforeBoundary": 3,
+      "eligibleEncounters": 3,
+      "excluded": 0,
+      "missedOrLate": 0,
+      "pass": "diagnostic_full_route",
+      "percent": 100,
+      "unknown": 0
+    },
+    "engineVersion": "ground-stereo-1.0.0",
+    "events": [
+      {
+        "hazardId": "bulk-1",
+        "kind": "first_detection",
+        "positionM": [
+          0,
+          0,
+          0
+        ],
+        "timeMs": 0
+      },
+      {
+        "hazardId": "cable-1",
+        "kind": "first_detection",
+        "positionM": [
+          0,
+          0,
+          -2.243999999999999
+        ],
+        "timeMs": 2040
+      },
+      {
+        "kind": "braking",
+        "positionM": [
+          0,
+          0,
+          -2.573999999999996
+        ],
+        "timeMs": 2340
+      },
+      {
+        "hazardId": "cable-1",
+        "kind": "near_miss",
+        "positionM": [
+          0,
+          0,
+          -3.168134999999994
+        ],
+        "timeMs": 3100
+      },
+      {
+        "kind": "stop",
+        "positionM": [
+          0,
+          0,
+          -3.2043846153846096
+        ],
+        "timeMs": 3340
+      }
+    ],
+    "execution": "client_computed",
+    "findings": [
+      {
+        "firstDetectionAxialDepthM": 1.2748884818056405,
+        "firstDetectionRangeM": 1.0222727272727337,
+        "hazardId": "cable-1",
+        "reason": "First valid return precedes the stopping boundary.",
+        "requiredStoppingDistanceM": 0.7103846153846154,
+        "sampleMethod": "analytic_with_occlusion",
+        "status": "detected_in_time",
+        "theoreticalThresholdRangeM": 1.2800000000000002
+      },
+      {
+        "firstDetectionAxialDepthM": 2.5497776873148337,
+        "firstDetectionRangeM": 2.2939999999999645,
+        "hazardId": "cable-2",
+        "reason": "First valid return precedes the stopping boundary.",
+        "requiredStoppingDistanceM": 0.7103846153846154,
+        "sampleMethod": "analytic_with_occlusion",
+        "status": "detected_in_time",
+        "theoreticalThresholdRangeM": 2.5600000000000005
+      },
+      {
+        "firstDetectionAxialDepthM": 9.200000361851776,
+        "firstDetectionRangeM": 8.951999999999899,
+        "hazardId": "bulk-1",
+        "reason": "First valid return precedes the stopping boundary.",
+        "requiredStoppingDistanceM": 0.7103846153846154,
+        "sampleMethod": "analytic_with_occlusion",
+        "status": "detected_in_time",
+        "theoreticalThresholdRangeM": null
+      }
+    ],
+    "id": "jh74wjms48dcah9an7jvq3r9pd8dth1h",
+    "outcome": {
+      "collisions": 0,
+      "completionTimeMs": null,
+      "falseStopEvents": 0,
+      "falseStopPercent": 0,
+      "nearMisses": 1,
+      "pass": "reactive",
+      "routeCompletionPercent": 29.130769230769175,
+      "stopEvents": 1,
+      "termination": "stopped"
+    },
+    "scenarioId": "scenario-6fc7e2f0-a62a-4dcf-990b-b94d9cd2e1b5-1",
+    "scenarioVersion": 2,
+    "seed": 20260905
+  },
+  "scenario": {
+    "assumptions": [
+      "Preset authoring: sentence selects the supported ground demonstration, not arbitrary scene reconstruction.",
+      "Two exact cables and one bulk envelope are authored stress tests, not observed infrastructure.",
+      "World reconstruction and reference scale remain estimates. Ground motion is a kinematic vertical capsule with finite braking."
+    ],
+    "authoring": "preset",
+    "hazards": [
+      {
+        "geometry": {
+          "diameterM": 0.008,
+          "endM": [
+            1.2,
+            0.35,
+            -3.5
+          ],
+          "kind": "cable",
+          "startM": [
+            -1.2,
+            0.35,
+            -3.5
+          ]
+        },
+        "id": "cable-1",
+        "justification": "Authored perpendicular stress span across the fixed route; dimensions are assumptions, not photo measurements.",
+        "libraryItem": {
+          "dimensionEvidence": "assumed",
+          "dimensionsM": [
+            2.4,
+            0.008,
+            0.008
+          ],
+          "id": "cable-1",
+          "materialClass": "opaque",
+          "name": "8 mm authored cable",
+          "returnAssumption": "Exact procedural geometry. Passive-stereo width threshold; no measured material-response claim.",
+          "type": "cable",
+          "version": 1
+        },
+        "observedInPhoto": false,
+        "placementSource": "preset"
+      },
+      {
+        "geometry": {
+          "diameterM": 0.016,
+          "endM": [
+            1.2,
+            0.35,
+            -6.5
+          ],
+          "kind": "cable",
+          "startM": [
+            -1.2,
+            0.35,
+            -6.5
+          ]
+        },
+        "id": "cable-2",
+        "justification": "Authored perpendicular stress span across the fixed route; dimensions are assumptions, not photo measurements.",
+        "libraryItem": {
+          "dimensionEvidence": "assumed",
+          "dimensionsM": [
+            2.4,
+            0.016,
+            0.016
+          ],
+          "id": "cable-2",
+          "materialClass": "opaque",
+          "name": "16 mm authored cable",
+          "returnAssumption": "Exact procedural geometry. Passive-stereo width threshold; no measured material-response claim.",
+          "type": "cable",
+          "version": 1
+        },
+        "observedInPhoto": false,
+        "placementSource": "preset"
+      },
+      {
+        "geometry": {
+          "dimensionsM": [
+            0.7,
+            0.55,
+            0.6
+          ],
+          "kind": "box",
+          "pose": {
+            "orientation": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "positionM": [
+              0,
+              0.275,
+              -9.5
+            ]
+          }
+        },
+        "id": "bulk-1",
+        "justification": "Authored bulk obstacle used as an opaque detection control.",
+        "libraryItem": {
+          "dimensionEvidence": "assumed",
+          "dimensionsM": [
+            0.7,
+            0.55,
+            0.6
+          ],
+          "id": "development-box",
+          "materialClass": "opaque",
+          "name": "Development bulk proxy, Tripo generation pending",
+          "returnAssumption": "Procedural development collision box. Tripo integration is incomplete; no generated Tripo visual is claimed.",
+          "type": "bulk",
+          "version": 1
+        },
+        "observedInPhoto": false,
+        "placementSource": "preset"
+      }
+    ],
+    "id": "scenario-6fc7e2f0-a62a-4dcf-990b-b94d9cd2e1b5-1",
+    "platform": {
+      "brakingDecelerationMps2": 1.3,
+      "clearanceMarginM": 0.08,
+      "controlLatencyS": 0.15,
+      "heightM": 0.7,
+      "mode": "ground",
+      "radiusM": 0.25,
+      "speedMps": 1.1
+    },
+    "route": [
+      {
+        "orientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "positionM": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "orientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "positionM": [
+          0,
+          0,
+          -11
+        ]
+      }
+    ],
+    "seed": 20260905,
+    "sentence": "Evaluate the warehouse ground route with two cables and an equipment crate.",
+    "version": 2,
+    "world": {
+      "cached": true,
+      "calibration": {
+        "colliderToWorld": [
+          1.2551026,
+          0,
+          0,
+          0,
+          0,
+          -1.2551026,
+          0,
+          0,
+          0,
+          0,
+          -1.2551026,
+          0,
+          0,
+          0.8235686,
+          0,
+          1
+        ],
+        "correctionFactor": 1,
+        "rawGroundPlaneOffset": 0.8235686,
+        "rawMetricScaleFactor": 1.2551026,
+        "reference": {
+          "evidence": "assumed",
+          "label": "Assumed meter reference after floor, axes and ruler inspection",
+          "lengthM": 1
+        },
+        "source": "estimated_reference",
+        "splatToWorld": [
+          1.2551026,
+          0,
+          0,
+          0,
+          0,
+          -1.2551026,
+          0,
+          0,
+          0,
+          0,
+          -1.2551026,
+          0,
+          0,
+          0.8235686,
+          0,
+          1
+        ],
+        "status": "verified",
+        "uncertaintyNote": "Text-generated fallback; source preview is generated imagery, not a site photograph. Operator confirmed visual registration with an assumed reference. Absolute dimensions remain estimated; no physical measurement is claimed.",
+        "verifiedAt": "2026-09-05T19:53:25.574Z"
+      },
+      "collider": {
+        "createdAt": "2026-09-05T18:36:51.216Z",
+        "id": "8a39154e3a952f7e35a87e0bd29da1ca723bbf373c5b70ca2128761bbc69a4be.glb",
+        "providerModelId": "marble-1.1",
+        "providerTaskId": "9faf42c4-d429-4e5c-871a-427caaa2aed2",
+        "sha256": "8a39154e3a952f7e35a87e0bd29da1ca723bbf373c5b70ca2128761bbc69a4be",
+        "source": "marble",
+        "url": "https://standing-pony-711.convex.cloud/api/storage/fb817803-0c6e-448b-bd99-60a79acdebc0"
+      },
+      "id": "6fc7e2f0-a62a-4dcf-990b-b94d9cd2e1b5",
+      "name": "Text-generated fallback warehouse",
+      "preparationMs": 324097,
+      "sourcePhotoUrl": "https://standing-pony-711.convex.cloud/api/storage/381eb3e2-aa26-4b68-b6e3-4578c6b3ef9e",
+      "splat": {
+        "createdAt": "2026-09-05T18:36:50.892Z",
+        "id": "2142b8cacb96798aa6ca376f165b97669bb854659a462d835e2a084c511bcbd4.spz",
+        "providerModelId": "marble-1.1",
+        "providerTaskId": "9faf42c4-d429-4e5c-871a-427caaa2aed2",
+        "sha256": "2142b8cacb96798aa6ca376f165b97669bb854659a462d835e2a084c511bcbd4",
+        "source": "marble",
+        "url": "https://standing-pony-711.convex.cloud/api/storage/bbd7667f-f3ea-4a0f-90b4-4c59b9523c89"
+      },
+      "version": 3
+    }
+  },
+  "status": "no_failure_observed",
+  "title": "Site Blind Spot Report"
+}
