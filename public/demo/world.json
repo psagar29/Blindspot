@@ -1,0 +1,76 @@
+{
+  "version": 2,
+  "name": "Text-generated fallback warehouse",
+  "sourcePhotoUrl": "/api/local/assets/228470b8d3bc81981f5e124793fa4632a71ba413b1aabbc182c3bd29bb548043.jpg",
+  "splat": {
+    "id": "2142b8cacb96798aa6ca376f165b97669bb854659a462d835e2a084c511bcbd4.spz",
+    "source": "marble",
+    "url": "/api/local/assets/2142b8cacb96798aa6ca376f165b97669bb854659a462d835e2a084c511bcbd4.spz",
+    "sha256": "2142b8cacb96798aa6ca376f165b97669bb854659a462d835e2a084c511bcbd4",
+    "providerTaskId": "9faf42c4-d429-4e5c-871a-427caaa2aed2",
+    "providerModelId": "marble-1.1",
+    "createdAt": "2026-09-05T18:36:50.892Z"
+  },
+  "collider": {
+    "id": "8a39154e3a952f7e35a87e0bd29da1ca723bbf373c5b70ca2128761bbc69a4be.glb",
+    "source": "marble",
+    "url": "/api/local/assets/8a39154e3a952f7e35a87e0bd29da1ca723bbf373c5b70ca2128761bbc69a4be.glb",
+    "sha256": "8a39154e3a952f7e35a87e0bd29da1ca723bbf373c5b70ca2128761bbc69a4be",
+    "providerTaskId": "9faf42c4-d429-4e5c-871a-427caaa2aed2",
+    "providerModelId": "marble-1.1",
+    "createdAt": "2026-09-05T18:36:51.216Z"
+  },
+  "cached": true,
+  "preparationMs": 324097,
+  "calibration": {
+    "status": "verified",
+    "source": "estimated_reference",
+    "rawMetricScaleFactor": 1.2551026,
+    "rawGroundPlaneOffset": 0.8235686,
+    "splatToWorld": [
+      1.2551026,
+      0,
+      0,
+      0,
+      0,
+      -1.2551026,
+      0,
+      0,
+      0,
+      0,
+      -1.2551026,
+      0,
+      0,
+      0.8235686,
+      0,
+      1
+    ],
+    "colliderToWorld": [
+      1.2551026,
+      0,
+      0,
+      0,
+      0,
+      -1.2551026,
+      0,
+      0,
+      0,
+      0,
+      -1.2551026,
+      0,
+      0,
+      0.8235686,
+      0,
+      1
+    ],
+    "correctionFactor": 1,
+    "uncertaintyNote": "Text-generated fallback; source preview is generated imagery, not a site photograph. Operator confirmed visual registration with an assumed reference. Absolute dimensions remain estimated; no physical measurement is claimed.",
+    "reference": {
+      "label": "Assumed meter reference after floor, axes and ruler inspection",
+      "lengthM": 1,
+      "evidence": "assumed"
+    },
+    "verifiedAt": "2026-09-05T19:53:25.574Z"
+  },
+  "id": "6fc7e2f0-a62a-4dcf-990b-b94d9cd2e1b5"
+}
