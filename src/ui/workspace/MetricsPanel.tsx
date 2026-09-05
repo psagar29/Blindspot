@@ -52,8 +52,11 @@ export function MetricsPanel({ state }: Pick<RuntimeBridge, "state">) {
         </div>
         {run ? (
           <p className="bs-meta">
-            Coverage from the {run.coverage.pass.replace(/_/g, " ")} pass · outcome from the {run.outcome.pass}
-            {" pass · seed "}
+            Coverage from the {run.coverage.pass.replace(/_/g, " ")} pass ·{" "}
+            {run.outcome.pass === "not_evaluated"
+              ? "reactive outcome not evaluated"
+              : `outcome from the ${run.outcome.pass} pass`}
+            {" · seed "}
             {run.seed} · engine {run.engineVersion}
           </p>
         ) : null}

@@ -109,14 +109,14 @@ export function ViewportShell(props: RuntimeBridge & { viewport: React.ReactNode
       {showOverlays ? (
         <div className="bs-viewport-overlay">
           <div className="bs-viewport-overlay-row">
-            <span className="bs-viewport-label">Ground truth</span>
+            <span className="bs-viewport-label" style={{ textTransform: "uppercase" }}>Ground truth</span>
             {state.status === "running" ? (
               <Badge tone="teal">
                 <span className="bs-dot" aria-hidden="true" />
                 Evaluating
               </Badge>
             ) : null}
-            <span className="bs-viewport-label">Modeled perception</span>
+            <span className="bs-viewport-label" style={{ textTransform: "uppercase" }}>Modeled perception</span>
           </div>
           <div className="bs-viewport-overlay-row">
             <span className="bs-viewport-label">
