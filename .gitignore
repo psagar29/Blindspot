@@ -1,20 +1,18 @@
-.env
-.env.*
-!.env.example
-**/.env
-**/.env.*
-!**/.env.example
-*.pem
-*.key
-secrets/
+# Dependencies and build output
 node_modules/
 dist/
 coverage/
+*.tsbuildinfo
+
+# Local credentials — never commit real env values (blank .env.example is allowed)
+.env
+.env.*
+!.env.example
+*.local
+
+# OS / editor noise
 .DS_Store
-work/
-outputs/
-.cache/
-.local/
-*.log
-playwright-report/
-test-results/
+Thumbs.db
+
+# Local working files
+.agent-work/
