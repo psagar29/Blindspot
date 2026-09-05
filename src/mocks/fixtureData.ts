@@ -131,7 +131,7 @@ export const fixtureLibrary: readonly HazardLibraryItem[] = [
     dimensionEvidence: "assumed",
     materialClass: "opaque",
     returnAssumption:
-      "Large opaque volume with plastic wrap glare; dense stereo support assumed (fixture stand-in - the real bulk asset is Person B's Tripo deliverable).",
+      "Large opaque authored volume; dense stereo support is an explicit fixture assumption.",
   },
 ];
 

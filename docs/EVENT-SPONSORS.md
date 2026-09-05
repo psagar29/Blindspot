@@ -19,13 +19,12 @@ Not published: team cap, prior-work eligibility, exact rubric, mandatory sponsor
 | Sponsor | Actual contribution | Owner | Proof required | Honest limit |
 | --- | --- | --- | --- | --- |
 | [World Labs](https://worldlabs.ai/) | Marble-generated site world: SPZ appearance, collider geometry, scale metadata | B | World/operation ID, sanitized manifest, cached files, visible scene and aligned collider | A key alone does not establish API credits/export success |
-| [Tripo](https://tripo3d.ai/) | One reusable generated bulk hazard in Hazard Library | B | Actual task/model ID, GLB, thumbnail, authored envelope, report entry | Tripo does not certify physical dimensions or sensor reflectance |
 | [Mint](https://mint.gg/) | Mint MCP-created robot body imported into the 3D scene; official 3D skills guide integration | A | Mint task/handoff and artifact manifest, imported GLB, visible robot | A chat UI or Spark/R3F dependency alone does not prove Mint use |
 | [Convex](https://convex.dev/) | Shared library, live phone config/status and durable immutable report | B; C verifies release | Second-device change, matching run version, report reload without laptop | Does not execute the GPU simulation |
 | Founders, Inc. Events | Presenter / venue and community | C acknowledges | Correct event attribution | No invented Founders API integration |
 
-The four integrations are the team's selected strategy. We found no public rule requiring all four, no separate API sponsor prize conditions, and no evidence naming the team's coding models as sponsors. Use actual onsite sponsor requirements if supplied later.
+The release deliberately ships three integrations: Marble, Mint, and Convex. Tripo is still named above because it is an event sponsor, but it is not claimed as a product integration. We found no public rule requiring all named sponsors, no separate API sponsor prize conditions, and no evidence naming the team's coding models as sponsors. Use actual onsite sponsor requirements if supplied later.
 
 ## Keep sponsor use lean
 
-Mint creates the robot; Tripo creates bulk hazards; Marble creates the site; Convex connects state/report. This avoids redundant world generators and leaves each sponsor a visible role. Never claim a Mint artifact is specifically Tripo-generated unless the provider manifest establishes that provenance. Do not use paid calls or install extra integrations just to fill a logo row.
+Mint creates the robot; Marble creates the site; Convex connects state/report. The bulk hazard is deliberately procedural and labeled as an authored control. Do not use paid calls or install extra integrations just to fill a logo row.

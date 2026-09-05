@@ -12,7 +12,7 @@
 | 1:22–1:48 | Open the public Site Blind Spot Report. Point to one hazard, its diameter/range/reason, source provenance and metric denominator. “This is the review artifact the operator can share.” |
 | 1:48–2:00 | “We identify failures under stated assumptions. We do not certify safety.” Optional second site/aerial only if already proven and it fits inside two minutes; replace a beat, do not extend the script. |
 
-The visible Mint robot should be recognizable. State that the bulk obstacle is the labeled development proxy because Tripo authenticated but had no available credits; do not imply that a Tripo artifact shipped. Mention Marble, Mint, and Convex while moving through their visible contributions rather than reciting an infrastructure slide.
+The visible Mint robot should be recognizable. State that the bulk obstacle is an intentionally authored procedural control with assumed dimensions and sensor return; do not imply that it is generated or measured. Mention Marble, Mint, and Convex while moving through their visible contributions rather than reciting an infrastructure slide.
 
 ## Before the room sees it
 
@@ -28,11 +28,11 @@ Fallback order: real cached run → visibly labeled recorded playback → backup
 - **How do you know scale?** We retain provider metric metadata, confirm alignment/reference scale, and publish the uncertainty and any correction.
 - **Why does a visible-nearby cable still collide?** First detection is later than the declared braking/latency boundary; finite braking is simulated and reported.
 - **Why this sensor threshold?** It is an explicit passive-stereo approximation, with stated raster/FOV/pixel threshold; not a universal hardware claim.
-- **What did each sponsor contribute?** Marble world exports; Tripo generated bulk hazard; Mint-generated robot artifact through MCP; Convex persistence/live config/report. Show provenance, not logos alone.
+- **What did the shipped integrations contribute?** Marble world exports; Mint-generated robot artifact through MCP; Convex persistence/live config/report. The event also names Tripo as a sponsor, but it is not part of this release. Show provenance, not logos alone.
 - **Is this a live AI model?** Name the actual configured model if used. Otherwise identify preset authoring and the model-ready validation adapter honestly.
 
 ## Submission package
 
 Internal checklist, **not an assertion of unpublished event rules**: repo main URL and exact commit, public demo/controller entry, example report URL, concise description, track, team names, real sponsor contributions, short backup recording, limitations and generation/evaluation timings. Confirm required fields/form and allowed prior work with organizers. Owner submits by the published 18:00 PDT deadline; target 17:45 for buffer.
 
-Release description: “Blindspot evaluates a ground robot's simplified perception inside a generated Marble world and publishes a reproducible report of modeled blind spots. It combines real Marble world exports, a Mint-generated rover, and Convex live configuration/reporting. The Tripo bulk-asset path is implemented but the demo uses a clearly labeled development proxy because the authorized account had no generation credits.”
+Release description: “Blindspot evaluates a ground robot's simplified perception inside a generated Marble world and publishes a reproducible report of modeled blind spots. It combines real Marble world exports, a Mint-generated rover, Convex live configuration/reporting, and explicitly authored procedural hazards whose physical assumptions stay separate from appearance.”

@@ -4,14 +4,13 @@ import type { ActionResult, AppActions, AppState, HazardLibraryItem, ReportSnaps
 import type { WorldScene } from '../engine/scene';
 import type { Evaluation, PlaybackFrame } from '../engine/evaluate';
 import { createSensorConfig } from '../engine/presets';
-import { createScenario } from '../engine/scenario';
+import { AUTHORED_BULK_HAZARD, createScenario } from '../engine/scenario';
 import { confirmWorldCalibration } from '../engine/calibration';
 import { nextSnapshot } from '../engine/versions';
 
-type Bootstrap={sessionId:string;ownerToken:string;controllerToken:string;developmentProxy?:boolean};
+type Bootstrap={sessionId:string;ownerToken:string;controllerToken:string};
 type LocalSession={localToken:string;bootstrap:Bootstrap|null;world:World|null;bulk:HazardLibraryItem|null};
 const wire=(value:unknown)=>JSON.parse(JSON.stringify(value));
-const developmentBulk:HazardLibraryItem={id:'development-box',version:1,name:'Development bulk box, Tripo asset pending',type:'bulk',dimensionsM:[0.7,0.55,0.6],dimensionEvidence:'assumed',materialClass:'opaque',returnAssumption:'Development proxy only. Tripo integration is incomplete.'};
 export function routeFromPath(path:string):RouteState {
   if(path==='/'||path==='/engine.html')return {kind:'workspace'};
   const control=/^\/control\/([a-zA-Z0-9_.:-]{1,128})$/.exec(path);if(control)return {kind:'controller',sessionId:control[1]!};
@@ -59,7 +58,7 @@ export class RuntimeStore {
     if(!isOperator){this.patch({connection:'connected',stageLabel:'Open a shared controller or report link. The operator workspace runs on its local laptop.'});return;}
     try{const local=await this.localFetch<LocalSession>('session');if(this.disposed||epoch!==this.routeEpoch)return;this.local=local;
       if(local.bootstrap)this.subscribeSession(local.bootstrap.sessionId);
-      else if(local.world){const scenario=createScenario(local.world,local.bulk||developmentBulk);this.patch({mode:'fixture',connection:'connected',world:local.world,scenario,library:scenario.hazards.map(h=>h.libraryItem),config:createSensorConfig('baseline'),status:local.world.calibration.status==='verified'?'ready':'calibrating',stageLabel:local.bulk?'Cached assets loaded. Seed the operator session to enable persistence.':'Cached Marble with a development bulk proxy. Tripo generation is pending.'});}
+      else if(local.world){const scenario=createScenario(local.world,local.bulk||AUTHORED_BULK_HAZARD);this.patch({mode:'fixture',connection:'connected',world:local.world,scenario,library:scenario.hazards.map(h=>h.libraryItem),config:createSensorConfig('baseline'),status:local.world.calibration.status==='verified'?'ready':'calibrating',stageLabel:'Cached Marble and Mint rover loaded. Seed the operator session to enable persistence.'});}
       else this.patch({connection:'connected',stageLabel:'Prepare one cached world before evaluation.'});this.deriveCapabilities();
     }catch(e){this.fail(e);}
   }
@@ -136,9 +135,9 @@ export class RuntimeStore {
       if(input.photo){const bytes=new Uint8Array(await input.photo.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);
         const {jobId}=await this.localFetch<{jobId:string}>('worlds',{generate:true,prompt:input.sentence,photo:{base64:btoa(binary),extension:input.photo.name.split('.').pop()?.toLowerCase()}});
         this.patch({status:'generating',stageLabel:'Marble generation accepted. Reusing this job until it completes.'});world=await this.waitJob(jobId);
-        this.patch({world,scenario:createScenario(world,this.local.bulk||developmentBulk,input.sentence),status:'calibrating',stageLabel:'Inspect world registration and confirm a reference before evaluation.'});return;}
+        this.patch({world,scenario:createScenario(world,this.local.bulk||AUTHORED_BULK_HAZARD,input.sentence),status:'calibrating',stageLabel:'Inspect world registration and confirm a reference before evaluation.'});return;}
       if(!world)throw new Error('Select a prepared world or upload a permitted source photo.');
-      const bulk=this.state.library.find(item=>item.type==='bulk')||this.local.bulk||developmentBulk;
+      const bulk=this.state.library.find(item=>item.type==='bulk')||this.local.bulk||AUTHORED_BULK_HAZARD;
       const response=await this.localFetch<{scenario:Scenario}>('scenarios',{sentence:input.sentence,world,bulk,version:(this.state.scenario?.version||0)+1});
       const scenario=await this.persistScenario(world,bulk,input.sentence,response.scenario.version);this.editing=false;
       this.patch({scenario,world:scenario.world,status:'ready',latestRun:null,stageLabel:'Preset authoring: fixed ground route, two cables and one bulk obstacle.'});
@@ -148,7 +147,7 @@ export class RuntimeStore {
       const registration=this.scene?.registration;const inspected=!!registration?.loaded&&registration.floorHeightM!==null&&Math.abs(registration.floorHeightM)<0.15;
       const world=confirmWorldCalibration(this.state.world,input,inspected);
       await this.localFetch('calibration',{world});this.local.world=world;
-      const bulk=this.state.library.find(item=>item.type==='bulk')||this.local.bulk||developmentBulk;
+      const bulk=this.state.library.find(item=>item.type==='bulk')||this.local.bulk||AUTHORED_BULK_HAZARD;
       const scenario=await this.persistScenario(world,bulk,this.state.scenario?.sentence||'Ground route with two cables and one bulk obstacle.',(this.state.scenario?.version||0)+1);this.editing=false;
       this.patch({world:scenario.world,scenario,status:'ready',stageLabel:'Estimated scale confirmed. Reconstruction remains approximate.'});
     }),

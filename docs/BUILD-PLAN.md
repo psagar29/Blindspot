@@ -9,7 +9,7 @@ A owns approximately half the product implementation by surface area, with less 
 | Owner | Deliverables | Exclusive paths |
 | --- | --- | --- |
 | A — Claude Fable 5.1, as supplied by user | All product UI, neumorphic system, state presentation, controller/report pages, fixtures, Mint robot asset, frontend bootstrap | `src/ui/**`, `src/styles/**`, `src/mocks/**`, `public/mint/**`, `docs/evidence/a/**`, `docs/handoffs/PERSON-A.md`, root `package.json`, `package-lock.json`, `tsconfig*.json`, `vite.config.ts`, `ui.html` |
-| B — Codex Astra | Engine, splat/proxy rendering, metrics, calibrated world, Tripo hazard, provider service, runtime adapter, Convex functions, engine harness | `src/engine/**`, `src/runtime/**`, `src/data/**`, `convex/**`, `services/provider/**`, `public/demo/**`, `docs/evidence/b/**`, `docs/handoffs/PERSON-B.md`, `engine.html` |
+| B — Codex Astra | Engine, splat/proxy rendering, metrics, calibrated world, authored hazard geometry, provider service, runtime adapter, Convex functions, engine harness | `src/engine/**`, `src/runtime/**`, `src/data/**`, `convex/**`, `services/provider/**`, `public/demo/**`, `docs/evidence/b/**`, `docs/handoffs/PERSON-B.md`, `engine.html` |
 | C — owner | Small composition entry, merges, deployment config, end-to-end checks, recorded demo and submission preparation | `src/main.tsx`, `index.html`, hosting config, `e2e/**`, `docs/evidence/c/**`, `docs/handoffs/PERSON-C.md`, final README status |
 | Frozen shared baseline | This plan, product/design specification, contracts | `shared/**`, planning docs, AGENTS.md, CLAUDE.md; no unilateral breaking changes |
 
@@ -19,7 +19,7 @@ A and B each supply a working isolated preview, their own tests, and a ready-to-
 
 1. A prepared Marble world with splats and aligned collider; measured or explicitly estimated scale; source-photo provenance.
 2. A ground robot with bounded motion and braking; one straight or gently bent route.
-3. Three hazards: two exact procedural cable placements with different dimensions/ranges, plus one normalized Tripo bulk asset and explicit collision box. A Mint-generated robot visual body establishes Mint's real contribution.
+3. Three hazards: two exact procedural cable placements with different dimensions/ranges, plus one authored procedural bulk control and explicit collision box. A Mint-generated robot visual body establishes Mint's real contribution without defining physics.
 4. One passive-stereo approximation; depth/proxy render, coherent intrinsics, thin-target visibility threshold, and late detection with finite braking. No stochastic material model required.
 5. Truth/perception split with the same pose and timestamp. Geometry drives collision; degraded points drive stop decisions.
 6. Full-route diagnostic scan for coverage plus one reactive outcome run. Computed coverage and actual false-stop metrics; zero false stops is an honest valid result.
@@ -36,7 +36,7 @@ Aerial, ToF, LiDAR, optical-flow drift, catenary solver, model-generated adversa
 | Time | A | B | C / integration gate |
 | --- | --- | --- | --- |
 | 10:00–10:20 | Bootstrap Vite/React/TS, pin compatible dependency set, implement fixture adapter boundary | Verify credentials/API shapes, initiate one fallback world; work on pure math while jobs run | Confirm onsite team/prior-work/submission rules; create local integration branch when ready |
-| 10:20–11:00 | Push `A0` bootstrap; shell, source photo, input, layout | Cache fallback before venue attempt; create Tripo bulk asset; world transforms and ruler | Early merge of A0 locally; no root-dependency guessing |
+| 10:20–11:00 | Push `A0` bootstrap; shell, source photo, input, layout | Cache fallback before venue attempt; author bulk control; world transforms and ruler | Early merge of A0 locally; no root-dependency guessing |
 | 11:00–12:00 | Main view components + Mint robot generation/import | Proxy depth, back-projection, cable threshold, synced viewport | Verify both previews launch; owners fix their own issues |
 | 12:00–13:00 | Controller/report/empty/error states using fixtures | Reactive route, swept collision, finite braking, diagnostic coverage | First composed slice locally as soon as A/B exports exist; do not wait until freeze |
 | 13:00–14:00 | Connect all UI events to contract; design pass | Convex persistence/live subscriptions, command queue, immutable report, full B adapter | **14:00 gate:** one completed ground run + real scores + reloadable report. If absent, remove P1 |

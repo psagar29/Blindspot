@@ -215,6 +215,14 @@ dl {
     border-left-width: 3px;
   }
 
+  .bs-report h2 {
+    break-after: avoid-page;
+  }
+
+  .bs-report-footer {
+    break-inside: avoid;
+  }
+
   a {
     color: inherit;
     text-decoration: none;

@@ -34,11 +34,12 @@ The jsdom UI tests emit expected `HTMLCanvasElement.getContext` notices because 
 
 - Session: `a037b718-842b-40c6-a0ce-bd89a91b4ad3`
 - Cached Marble preparation time displayed by the product: 324.1 seconds.
-- Baseline run: `jh7bbszcrpz8k4kq2aspzkmezn8dtee7`, config v2, 2/3 coverage, 1/1 false stops.
-- Phone request: higher-resolution preset, queued as config v3.
-- Higher-resolution run: `jh71fms7e3r2ws6d02sgqmb0vs8dvb2z`, config v3, 2/3 coverage, 0/1 false stops, reactive outcome `stopped`.
-- Immutable report: `5ef08b92-cab3-45d1-a4fd-5b53c9dcaf3f`.
-- Report snapshot SHA-256: `76aa9e74194b574390d97fb2ee7ef0fcb2f18fbc040e0110489c2781edefdaeb`.
+- Mint-only scenario version: v3, containing two exact procedural cables, the authored procedural equipment crate, and the Mint rover visual.
+- Higher-resolution run: `jh7cc41wjdhdgfegjjaw8rm1yh8dvfy9`, config v4, 3/3 coverage, 1/1 false stops, reactive outcome `stopped`.
+- Phone request: baseline preset, queued as config v5.
+- Baseline run: `jh7e5vw01t9v00y7z7aptv86jd8dvf4p`, config v5, 2/3 coverage, no stop-event denominator, reactive outcome `collision`.
+- Immutable baseline report: `c95256fa-abb3-4e16-afab-36c06c7c8869`.
+- Report snapshot SHA-256: `9c16b0de09f5a9a10cb9a5bb3c9c2e695e2b15db165034b4a599092744d51b5f`.
 
 The operator was inspected at desktop and 390×844 responsive sizes. The phone controller was inspected at 390×844, queued the new version through Convex, and observed the matching completion. The report route was opened directly, reloaded, checked at screen and print media, and rechecked after the local provider and operator were stopped.
 
@@ -59,7 +60,7 @@ The source preview returned HTTP 200. The report JSON passed the capability/cred
 - Marble: authorized and credits available; shipped cache and durable assets are real.
 - Mint: real generated rover shipped and rendered.
 - Convex: real live subscription, bounded controller mutation, operator execution, durable assets, and immutable public report verified.
-- Tripo: authorized, but credits unavailable. No Tripo task/model/asset is claimed. The release uses the explicit development bulk proxy.
+- Authored bulk control: procedural, with assumed dimensions and sensor-return behavior; no generated-asset claim.
 - Runtime model: not configured. Authoring uses the labeled deterministic preset parser.
 - Demo site: Marble-generated warehouse from a text prompt, not a real venue photograph.
 

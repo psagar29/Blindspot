@@ -18,13 +18,11 @@ The user's [tutorial](https://mcp.mint.gg/#how-it-works) provides a real local c
 
 A's minimal workflow: inspect identity/credits, select/create a project, `start_model_generation`, `wait_for_status`, `get_asset_artifact_manifest`, import its final GLB. Follow live schemas, including required context fields. Preserve sanitized task/Mint handoff, filename, checksum and licensing/provenance. The manifest provides portable artifact URLs/loader hints; do not scrape private download pages. [Tool catalog](https://mcp.mint.gg/docs), [model tool](https://mcp.mint.gg/docs/tools/start_model_generation), [artifact manifest](https://mcp.mint.gg/docs/tools/get_asset_artifact_manifest).
 
-Mint's documented renderer uses Spark/Three/R3F, but using those libraries alone is not using Mint. Our actual Mint artifact is the visible robot body. Direct Marble and Tripo paths preserve their separate attribution; do not assume Mint exposes or chooses a particular underlying provider. [World Labs Mint showcase](https://www.worldlabs.ai/labs/showcase/mint), [Mint architecture guide](https://mint.gg/blog/3d-mcp-guide).
+Mint's documented renderer uses Spark/Three/R3F, but using those libraries alone is not using Mint. Our actual Mint artifact is the visible robot body, with a task identifier, artifact manifest, checksum, and imported GLB. The mesh is decorative: physical radius and height remain explicit simple geometry. [World Labs Mint showcase](https://www.worldlabs.ai/labs/showcase/mint), [Mint architecture guide](https://mint.gg/blog/3d-mcp-guide).
 
-## Tripo
+## Authored hazard geometry
 
-Current documented text-to-model generation uses `POST https://openapi.tripo3d.ai/v3/generation/text-to-model` with Bearer authentication and an asynchronous task/result workflow. B must inspect the current task polling schema, model enum and returned output fields; do not mix a legacy v2 polling format with v3 generation. Select GLB and a bounded polygon/texture budget. [Official text-to-model API](https://developers.tripo3d.ai/en/docs/generation-text-to-model/standard).
-
-Treat `auto_size` and PBR maps as generation/visual features, not evidence of physical dimensions or infrared reflectance. Normalize a generated bulk asset into an authored, labeled envelope. Keep a separate simple collider; record dimensions as assumed or operator-measured. Use procedural exact-diameter cables. Reusable bulk assets are Tripo's value here; removing Tripo would not make hazard description mathematically impossible.
+The two cables and bulk control use deterministic procedural geometry. Their dimensions and sensor-return behavior are assumptions, not provider-certified measurements. Keep visual geometry separate from simple colliders, record dimensions as assumed or operator-measured, and use exact-diameter cables for reproducible threshold tests.
 
 ## Sensor and renderer correctness
 

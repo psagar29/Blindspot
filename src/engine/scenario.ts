@@ -11,8 +11,19 @@ export const MINT_PLATFORM_ASSET: AssetRef = {
   createdAt: '2026-09-05T20:08:25.380Z',
 };
 
+export const AUTHORED_BULK_HAZARD: HazardLibraryItem = {
+  id: 'authored-equipment-crate',
+  version: 1,
+  name: 'Authored equipment crate',
+  type: 'bulk',
+  dimensionsM: [0.7, 0.55, 0.6],
+  dimensionEvidence: 'assumed',
+  materialClass: 'opaque',
+  returnAssumption: 'Procedural collision box used as an opaque detection control. Dimensions and sensor return are authored assumptions; Mint supplies the separate generated robot body.',
+};
+
 export function cableLibrary(): HazardLibraryItem[] {return [0.008,0.016].map((d,i)=>({id:`cable-${i+1}`,version:1,name:`${d*1000} mm authored cable`,type:'cable',dimensionsM:[2.4,d,d],dimensionEvidence:'assumed',materialClass:'opaque',returnAssumption:'Exact procedural geometry. Passive-stereo width threshold; no measured material-response claim.'}));}
-export function createScenario(world: World,bulk: HazardLibraryItem,sentence='Evaluate the warehouse ground route with two cables and an equipment crate.',version=1): Scenario {
+export function createScenario(world: World,bulk: HazardLibraryItem=AUTHORED_BULK_HAZARD,sentence='Evaluate the warehouse ground route with two cables and an equipment crate.',version=1): Scenario {
   if(sentence.length<1||sentence.length>1024)throw new Error('Use a sentence between 1 and 1024 characters.');
   if(/\b(aerial|drone|lidar|tof|fly|flying)\b/i.test(sentence))throw new Error('This ground preset supports a robot, two cables and one bulk obstacle. Aerial and other sensors are not evaluated.');
   const cables=cableLibrary();

@@ -13,4 +13,4 @@ This is an actual World Labs Marble text generation, not a photograph or a measu
 
 Run `npm --prefix services/provider run cache:restore` from the checkout root to restore these files and the accepted completed job to the ignored local cache. This verifies checksums and makes no paid request. It preserves an existing operator calibration. Do not copy `.local/provider/bootstrap.json` to the public directory: it contains private capabilities.
 
-No Tripo or Mint asset is included. The development bulk box and procedural robot must retain their explicit labels until real assets are supplied. Provider API keys and signed provider URLs are not included. These exports are provided as generated project demo assets, not as a claim to rights in a real venue photograph.
+The Marble fallback package does not contain the Mint asset. The real Mint rover is stored separately under `public/mint/`; the authored bulk box remains procedural and explicitly labeled. Provider API keys and signed provider URLs are not included. These exports are provided as generated project demo assets, not as a claim to rights in a real venue photograph.

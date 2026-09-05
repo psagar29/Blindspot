@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { loadConfig, configured, type Config } from './config';
 import { Providers, ProviderError, atomicJson } from './providers';
-import { createScenario } from '../../../src/engine/scenario';
+import { AUTHORED_BULK_HAZARD, createScenario } from '../../../src/engine/scenario';
 
 export function localRequestAllowed(req:IncomingMessage,c:Config) {
   const expected=new URL(c.operatorOrigin);
@@ -30,9 +30,8 @@ export function createProviderServer(config:Config) {
       if(req.method==='GET'&&path==='/api/local/health'){send(res,200,{providers:configured(config),authoring:'preset'});return;}
       if(req.method==='GET'&&path==='/api/local/session'){
         let bootstrap=null;try{const saved=JSON.parse(await readFile(join(config.cacheDir,'bootstrap.json'),'utf8'));if(saved.ready)bootstrap=saved;}catch{/* Seeding is explicit. */}
-        let world=null,bulk=null;try{world=JSON.parse(await readFile(join(config.cacheDir,'marble-demo.json'),'utf8'));}catch{}
-        try{bulk=JSON.parse(await readFile(join(config.cacheDir,'tripo-demo.json'),'utf8'));}catch{}
-        send(res,200,{localToken,bootstrap,world,bulk,providers:configured(config),authoring:'preset'});return;
+        let world=null;try{world=JSON.parse(await readFile(join(config.cacheDir,'marble-demo.json'),'utf8'));}catch{}
+        send(res,200,{localToken,bootstrap,world,bulk:AUTHORED_BULK_HAZARD,providers:configured(config),authoring:'preset'});return;
       }
       if(req.method!=='GET'&&!matches(req.headers['x-blindspot-local-token']))throw new ProviderError('LOCAL_TOKEN','Local operator session token required.',403);
       if(req.method==='GET'&&path.startsWith('/api/local/assets/')){
@@ -44,14 +43,14 @@ export function createProviderServer(config:Config) {
         res.end(await readFile(file));return;
       }
       if(req.method==='GET'&&path.startsWith('/api/local/jobs/')){const job=await providers.poll(path.slice('/api/local/jobs/'.length));await providers.cacheResult(job);send(res,200,job);return;}
-      if(req.method==='POST'&&(path==='/api/local/worlds'||path==='/api/local/hazards')){
+      if(req.method==='POST'&&path==='/api/local/worlds'){
         const input=await body(req);if(input.generate!==true)throw new ProviderError('OPERATOR_ACTION','An explicit Generate action is required.');
         if(typeof input.prompt!=='string')throw new ProviderError('PROMPT','A supported prompt is required.');
         let photo;
         if(input.photo){if(typeof input.photo.base64!=='string'||typeof input.photo.extension!=='string')throw new ProviderError('PHOTO','Invalid photo upload.');photo={bytes:Buffer.from(input.photo.base64,'base64'),extension:input.photo.extension};
           const b=photo.bytes,valid=photo.extension==='png'?b.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])):['jpg','jpeg'].includes(photo.extension)?b[0]===255&&b[1]===216:photo.extension==='webp'?b.toString('ascii',0,4)==='RIFF'&&b.toString('ascii',8,12)==='WEBP':false;
           if(!valid)throw new ProviderError('PHOTO','Photo bytes do not match the permitted image type.');}
-        const job=await providers.start(path.endsWith('worlds')?'marble':'tripo',input.prompt,photo);send(res,202,{jobId:job.id});return;
+        const job=await providers.start('marble',input.prompt,photo);send(res,202,{jobId:job.id});return;
       }
       if(req.method==='POST'&&path==='/api/local/scenarios'){
         const input=await body(req);

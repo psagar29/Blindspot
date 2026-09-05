@@ -23,7 +23,7 @@ A passing planning-kit check is not proof the application works. These are imple
 7. **Concurrency:** two open operator tabs cannot claim the same lease/run; duplicate request IDs don't create duplicate configs; stale run version cannot replace a newer selection; offline executor leaves queued status.
 8. **Persistence:** report is immutable after later config/library edits. Public report reloads from durable storage and contains no owner/controller token. Unsupported report IDs show not found.
 9. **Access:** controller capability only changes bounded presets; cannot complete a run, publish, seize ownership, or create paid jobs. Untrusted input/unknown IDs/ranges fail validation. Provider failures expose no credentials.
-10. **Real integration:** Marble SPZ+collider rendered and calibration inspected; actual Tripo bulk model appears in library/report; Convex changes travel between two browsers; local authoring uses the actual declared provider or labeled preset fallback.
+10. **Real integration:** Marble SPZ+collider rendered and calibration inspected; the actual Mint rover appears in the scene and report provenance; the procedural bulk control is labeled as authored; Convex changes travel between two browsers; local authoring uses the declared preset fallback.
 
 ## C — one end-to-end path
 
@@ -33,7 +33,7 @@ A passing planning-kit check is not proof the application works. These are imple
 4. Open QR controller in a second browser/phone; verify its origin is the deployed app, never localhost. Apply a preset. Observe queued version, one operator run, then matching completed figures. Previous results never masquerade as the new config.
 5. Publish report. Open direct public URL in a fresh browser, reload, and verify the complete snapshot/claim boundary. Stop the local provider process and operator tab; the report still loads. Controller correctly says operator offline.
 6. Test one provider failure and one disconnected subscription using the cached/queued path. Verify recorded playback is labeled and cannot overwrite measured data.
-7. Confirm all four real sponsor evidence records. Confirm no provider/deploy/owner credentials in Git tracked files, built browser JS, sourcemaps, logs, report JSON or share URLs. The limited controller capability is intentionally present only in its QR fragment, never in report URLs.
+7. Confirm the three shipped integration evidence records. Confirm no provider/deploy/owner credentials in Git tracked files, built browser JS, sourcemaps, logs, report JSON or share URLs. The limited controller capability is intentionally present only in its QR fragment, never in report URLs.
 8. Record the actual demo build. Save screenshots, final run/report IDs, asset checksums, commit SHAs and measured timings. Report any missing external access or failed gate honestly.
 
 ## Ready definitions

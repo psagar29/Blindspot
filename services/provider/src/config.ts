@@ -9,7 +9,6 @@ export function loadConfig() {
   const first = (...names: string[]) => names.map(n => process.env[n]).find(Boolean) || '';
   return {
     worldKey: first('WORLD_LABS_API_KEY', 'WORLDLABS_API_KEY', 'WLT_API_KEY'),
-    tripoKey: first('TRIPO_API_KEY', 'TRIPO3D_API_KEY'),
     deployKey: first('CONVEX_DEPLOY_KEY'),
     convexUrl: first('VITE_CONVEX_URL', 'CONVEX_URL') || 'https://standing-pony-711.convex.cloud',
     publicOrigin: first('VITE_PUBLIC_APP_ORIGIN'),
@@ -21,5 +20,5 @@ export function loadConfig() {
 }
 export type Config = ReturnType<typeof loadConfig>;
 export function configured(c: Config) {
-  return { marble: !!c.worldKey, tripo: !!c.tripoKey, convex: !!c.deployKey, model: !!(c.modelKey && c.modelBaseUrl && c.modelId) };
+  return { marble: !!c.worldKey, mintAsset: true, convex: !!c.deployKey, model: !!(c.modelKey && c.modelBaseUrl && c.modelId) };
 }

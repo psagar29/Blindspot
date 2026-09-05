@@ -6,7 +6,6 @@
 flowchart LR
   O[Operator browser on laptop] -->|same-origin dev proxy| L[Local Node provider service]
   L --> W[World Labs API]
-  L --> T[Tripo API]
   L --> M[Configured model API, optional]
   O <-->|subscriptions and commands| C[Convex state and file storage]
   P[Public phone controller] <-->|bounded config presets| C
@@ -72,6 +71,6 @@ Generation is asynchronous, cancellable locally, timeout-bounded and cache-first
 - Provider outage: use a visibly labeled cached world/asset and display provenance and actual preparation time.
 - Missing runtime model: preset authoring with deterministic reasons, explicitly labeled; do not fake model output.
 - Missing Marble collider or unverified scale: allow appearance preview, disable metric report publication.
-- Missing Tripo/Mint: use temporary labeled development placeholders, track sponsor integration as incomplete.
+- Missing Mint cache: keep the physical platform envelope but mark the decorative visual unavailable; never relabel a placeholder as generated.
 - WebGL unavailable: controller/report work; workspace gives a helpful unsupported-device state and offers the recorded run.
 - Operator offline: phone queues/no new simulation; published reports remain readable.

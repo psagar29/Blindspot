@@ -239,7 +239,7 @@ describe("capabilities and execution ownership", () => {
 
   it("prominently preserves development proxy and hazard assumptions without duplicate limitations", async () => {
     const data = fixtures();
-    const proxyLabel = "Development bulk proxy: Tripo integration pending.";
+    const proxyLabel = "Authored bulk hazard: dimensions and sensor return are assumptions.";
     data.scenario.assumptions = [...data.scenario.assumptions, proxyLabel, data.baselineConfig.assumptions[0]!];
     data.library[1]!.returnAssumption = proxyLabel;
     const { t } = await setup(data);

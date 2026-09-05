@@ -14,9 +14,9 @@ import { createScenario } from '../../../src/engine/scenario';
 const localRequest=(url:string,options:{method?:string;headers?:Record<string,string>;body?:string}={})=>new Promise<{status:number;text:()=>Promise<string>;json:()=>Promise<any>}>((resolve,reject)=>{
   const req=request(url,{method:options.method,headers:options.headers},res=>{let data='';res.on('data',chunk=>data+=chunk);res.on('end',()=>resolve({status:res.statusCode!,text:async()=>data,json:async()=>JSON.parse(data)}));});req.on('error',reject);req.end(options.body);
 });
-const config=(cacheDir:string):Config=>({cacheDir,worldKey:'test-only-secret',tripoKey:'',deployKey:'',convexUrl:'https://example.convex.cloud',publicOrigin:'',modelKey:'',modelBaseUrl:'',modelId:'',port:0,operatorOrigin:'http://localhost:5173'});
-test('SSRF allowlist rejects lookalikes, credentials, loopback and redirects targets',()=>{
-  for(const url of ['http://worldlabs.ai/file','https://worldlabs.ai.evil.test/file','https://worldlabs.ai@127.0.0.1/file','https://localhost/file','https://storage.googleapis.com:8443/file'])assert.throws(()=>safeAssetUrl(url));
+const config=(cacheDir:string):Config=>({cacheDir,worldKey:'test-only-secret',deployKey:'',convexUrl:'https://example.convex.cloud',publicOrigin:'',modelKey:'',modelBaseUrl:'',modelId:'',port:0,operatorOrigin:'http://localhost:5173'});
+test('SSRF allowlist rejects lookalikes, credentials, loopback, retired providers and redirect targets',()=>{
+  for(const url of ['http://worldlabs.ai/file','https://worldlabs.ai.evil.test/file','https://worldlabs.ai@127.0.0.1/file','https://localhost/file','https://storage.googleapis.com:8443/file','https://cdn.tripo3d.ai/file'])assert.throws(()=>safeAssetUrl(url));
   assert.equal(safeAssetUrl('https://cdn.worldlabs.ai/file').hostname,'cdn.worldlabs.ai');
 });
 test('protected local server rejects foreign origins, DNS rebinding, missing tokens and traversal',async()=>{

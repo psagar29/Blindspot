@@ -5,7 +5,7 @@ import { randomBytes, randomUUID } from 'node:crypto';
 import { ConvexHttpClient } from 'convex/browser';
 import { makeFunctionReference } from 'convex/server';
 import type { HazardLibraryItem, World } from '../../../shared/contracts';
-import { createScenario, cableLibrary } from '../../../src/engine/scenario';
+import { AUTHORED_BULK_HAZARD, createScenario, cableLibrary } from '../../../src/engine/scenario';
 import { createSensorConfig } from '../../../src/engine/presets';
 import { nextSnapshot } from '../../../src/engine/versions';
 import { repoRoot, type Config } from './config';
@@ -16,21 +16,16 @@ export async function runConvex(c:Config,args:string[]) {
   const env={PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:process.env.TMPDIR,CI:'1',CONVEX_DEPLOY_KEY:c.deployKey,CONVEX_DEPLOYMENT:'dev:standing-pony-711'};
   const output=await new Promise<string>((resolve,reject)=>{const child=spawn(process.execPath,[join(repoRoot,'node_modules/convex/bin/main.js'),...args],{cwd:repoRoot,env,stdio:['ignore','pipe','pipe']});let text='';
     child.stdout.on('data',chunk=>{text+=chunk;});child.stderr.on('data',chunk=>{text+=chunk;});child.on('error',()=>reject(new ProviderError('CONVEX_CLI','Convex CLI could not start.')));
-    child.on('exit',code=>{for(const value of [c.deployKey,c.worldKey,c.tripoKey,c.modelKey])if(value)text=text.split(value).join('[redacted]');if(code===0)resolve(text);else reject(new ProviderError('CONVEX_CLI',text.slice(-5000),502));});});
+    child.on('exit',code=>{for(const value of [c.deployKey,c.worldKey,c.modelKey])if(value)text=text.split(value).join('[redacted]');if(code===0)resolve(text);else reject(new ProviderError('CONVEX_CLI',text.slice(-5000),502));});});
   return output;
 }
-export async function seedDemo(c:Config,developmentProxy=false) {
-  let world:World,bulk:HazardLibraryItem;
+export async function seedDemo(c:Config) {
+  let world:World,bulk:HazardLibraryItem=AUTHORED_BULK_HAZARD;
   try{world=JSON.parse(await readFile(join(c.cacheDir,'marble-demo.json'),'utf8'));}catch{throw new ProviderError('CACHE','Prepare the Marble world first.');}
   if(world.calibration.status!=='verified')throw new ProviderError('CALIBRATION','Inspect the 3D floor, ruler and axes, then confirm calibration in the local engine harness.');
-  try{bulk=JSON.parse(await readFile(join(c.cacheDir,'tripo-demo.json'),'utf8'));}catch{
-    if(!developmentProxy)throw new ProviderError('TRIPO_CACHE','A cached Tripo hazard is required. --development-proxy explicitly enables incomplete-integration testing.');
-    bulk={id:'development-box',version:1,name:'Development bulk proxy, Tripo generation pending',type:'bulk',dimensionsM:[0.7,0.55,0.6],dimensionEvidence:'assumed',materialClass:'opaque',returnAssumption:'Procedural development collision box. Tripo integration is incomplete; no generated Tripo visual is claimed.'};
-  }
-  const file=join(c.cacheDir,'bootstrap.json');let bootstrap:{sessionId:string;ownerToken:string;controllerToken:string;developmentProxy:boolean;ready?:boolean};
-  try{bootstrap=JSON.parse(await readFile(file,'utf8'));if(bootstrap.developmentProxy&&!developmentProxy){bootstrap.developmentProxy=false;bootstrap.ready=false;}
-    else if(bootstrap.developmentProxy!==developmentProxy)throw new ProviderError('BOOTSTRAP_MODE','A real-asset session cannot be downgraded to the development proxy.');}
-  catch(e){if(e instanceof ProviderError)throw e;bootstrap={sessionId:randomUUID(),ownerToken:randomBytes(32).toString('base64url'),controllerToken:randomBytes(32).toString('base64url'),developmentProxy};await atomicJson(file,bootstrap);}
+  const file=join(c.cacheDir,'bootstrap.json');let bootstrap:{sessionId:string;ownerToken:string;controllerToken:string;ready?:boolean};
+  try{const saved=JSON.parse(await readFile(file,'utf8'));bootstrap={sessionId:saved.sessionId,ownerToken:saved.ownerToken,controllerToken:saved.controllerToken,ready:saved.ready};}
+  catch{bootstrap={sessionId:randomUUID(),ownerToken:randomBytes(32).toString('base64url'),controllerToken:randomBytes(32).toString('base64url')};await atomicJson(file,bootstrap);}
   const refreshing=bootstrap.ready===true;
   const initial=createScenario(world,bulk);const library=[...cableLibrary(),bulk];
   await runConvex(c,['run','seed:bootstrap',JSON.stringify({sessionId:bootstrap.sessionId,ownerCapabilityHash:digest(bootstrap.ownerToken),controllerCapabilityHash:digest(bootstrap.controllerToken),world,library,scenario:initial,baselineConfig:createSensorConfig('baseline')})]);
@@ -51,16 +46,18 @@ export async function seedDemo(c:Config,developmentProxy=false) {
     uploaded.set(url,saved.url);await atomicJson(mapFile,Object.fromEntries(uploaded));return saved.url as string;
   }
   world=nextSnapshot({...world,sourcePhotoUrl:await durable(world.sourcePhotoUrl),splat:{...world.splat,url:await durable(world.splat.url)},collider:{...world.collider,url:await durable(world.collider.url)}},await query('worlds:latest',{...auth,worldId:world.id}));
-  if(bulk.asset)bulk=nextSnapshot({...bulk,asset:{...bulk.asset,url:await durable(bulk.asset.url)}},(await query('library:list',{sessionId:bootstrap.sessionId})).find((item:HazardLibraryItem)=>item.id===bulk.id)??null);
+  const currentLibrary=await query('library:list',{sessionId:bootstrap.sessionId}) as HazardLibraryItem[];
+  if(bulk.asset)bulk={...bulk,asset:{...bulk.asset,url:await durable(bulk.asset.url)}};
+  bulk=nextSnapshot(bulk,currentLibrary.find((item:HazardLibraryItem)=>item.id===bulk.id)??null);
   await mutation('worlds:ingest',{...auth,world,inputHash:digest(`durable:${world.id}`)});
-  if(bulk.asset)await mutation('library:ingest',{...auth,item:bulk,requestHash:digest(`durable:${bulk.id}`)});
+  await mutation('library:ingest',{...auth,item:bulk,requestHash:digest(`authored:${bulk.id}`)});
   const preparedScenario=createScenario(world,bulk,initial.sentence);
   const localVisual=preparedScenario.platform.visualAsset;
   const visualAsset=localVisual?{...localVisual,url:await durable(localVisual.url),...(localVisual.thumbnailUrl?{thumbnailUrl:await durable(localVisual.thumbnailUrl)}:{})}:undefined;
   const scenario=nextSnapshot({...preparedScenario,id:existing.scenario.id,platform:{...preparedScenario.platform,...(visualAsset?{visualAsset}:{})}},existing.scenario);
   await mutation('scenarios:create',{...auth,scenario});bootstrap.ready=true;await atomicJson(file,bootstrap);
   await atomicJson(join(c.cacheDir,'durable-demo.json'),{world,bulk,scenario});
-  return {sessionId:bootstrap.sessionId,ready:true,developmentProxy,refreshing};
+  return {sessionId:bootstrap.sessionId,ready:true,assetProvider:'mint',refreshing};
 }
 
 export async function publishDemo(c:Config,runId?:string){

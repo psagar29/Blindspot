@@ -53,12 +53,12 @@ Blindspot is implemented as a release candidate: the React operator console, Thr
 | Artifact | State |
 | --- | --- |
 | Public app | [blindspot-site-review.sagarpranav000.chatgpt.site](https://blindspot-site-review.sagarpranav000.chatgpt.site) |
-| Example immutable report | [Higher-resolution run, config v3](https://blindspot-site-review.sagarpranav000.chatgpt.site/reports/5ef08b92-cab3-45d1-a4fd-5b53c9dcaf3f) |
+| Example immutable report | [Baseline blind-spot run, config v5](https://blindspot-site-review.sagarpranav000.chatgpt.site/reports/c95256fa-abb3-4e16-afab-36c06c7c8869) |
 | Frontend and operator runtime | Complete; authoring remains local-only by design |
 | Engine and Convex backend | Complete; deterministic tests and a live two-browser run pass |
 | World Labs Marble | Real cached generated world, collider, preview, and durable report assets verified |
 | Mint | Real generated rover GLB rendered in the scene and stored durably in the report |
-| Tripo | Adapter complete, but **no real generated asset is claimed**: the authorized account reported no available credits, so the release uses a visibly labeled development bulk proxy |
+| Authored hazard geometry | Two exact procedural cables and one clearly labeled procedural bulk control, each with separate truth geometry |
 | Runtime model authoring | No model credentials were supplied; the release uses the documented deterministic preset parser |
 
 The release keeps contract version `1`. A quick structural check is still available:
@@ -92,7 +92,7 @@ Blindspot is an inspection console, not a certification tool. One operator lapto
 
 **1. Generate the world.** A source photograph goes to World Labs Marble, which returns a splat appearance scene (SPZ), a collider mesh, and metric scale metadata. Documented metric scale, ground-plane offset, and axis conversion are applied once, then independently verified against an aligned floor, a reference dimension, and a 1&nbsp;m ruler. Unverified scale blocks quantitative publication — it does not silently proceed in arbitrary units.
 
-**2. Author the hazards.** A plain sentence plus the calibrated world produces three placed hazards: two exact procedural cables with specified endpoints and exact diameters, and one normalized bulk obstacle inside an authored, labeled collision envelope. The Tripo generation path is implemented, but this release uses an explicit development proxy because the authorized account had no generation credits. Authored stress hazards are never presented as photo-confirmed infrastructure.
+**2. Author the hazards.** A plain sentence plus the calibrated world produces three placed hazards: two exact procedural cables with specified endpoints and exact diameters, and one procedural bulk obstacle inside an authored, labeled collision envelope. Mint supplies the generated rover body, while collision and sensor truth remain independent simple geometry. Authored stress hazards are never presented as photo-confirmed infrastructure.
 
 **3. Separate truth from perception.** Ground-truth geometry — the coarse environment collider, exact cable capsules, normalized bulk boxes — is kept strictly apart from what the sensor model can see. Splats are appearance only and never act as a depth authority. An independent opaque geometry pass renders metric depth and object IDs at the *actual* declared sensor resolution.
 
@@ -127,7 +127,6 @@ Coordinate conventions: metres, seconds, radians; X right, Y up, nominal forward
 flowchart LR
   O[Operator browser on laptop] -->|same-origin dev proxy| L[Local Node provider service]
   L --> W[World Labs API]
-  L --> T[Tripo API]
   L --> M[Configured model API, optional]
   O <-->|subscriptions and commands| C[Convex state and file storage]
   P[Public phone controller] <-->|bounded config presets| C
@@ -157,21 +156,20 @@ The simulation runs **once**, on the operator laptop. Convex holds state, live s
 
 ## Sponsor implementation
 
-Three sponsor integrations are proven in the release; the fourth is retained as an implemented but externally blocked path. No paid calls were made purely to fill a logo row.
+Three technology integrations are proven in the release. Tripo remains an event sponsor but is deliberately not part of the shipped application.
 
 | Sponsor | Actual contribution | Owner | Proof required | Honest limit |
 | --- | --- | --- | --- | --- |
 | **[World Labs](https://worldlabs.ai/)** — Marble | The demo world itself: SPZ splat appearance, collider geometry, and metric scale metadata, generated from the prepared text prompt and cached before the demo | B | World / operation ID, sanitized manifest, cached files, visible scene with an aligned collider | The release world is generated rather than a real venue survey. Generation is asynchronous and typically takes minutes |
-| **[Tripo](https://tripo3d.ai/)** | The bounded task/poll/export adapter and normalized Hazard Library path are implemented; the shipped scenario uses a labeled development box | B | Authorization and credit-state preflight; adapter tests | The authorized account had no available credits, so there is no Tripo task ID, GLB, thumbnail, or shipped Tripo claim |
 | **[Mint](https://mint.gg/)** | The robot body: a real GLB created through the Mint MCP workflow, imported into the 3D scene, and copied into durable report storage with sanitized provenance | A; C integrates | Mint task `ks74ch8bya740cjkcz9zp55adx8dtnmn`, imported GLB, checksum, visible rover | The decorative mesh never defines the physical robot envelope |
-| **[Convex](https://convex.dev/)** | Shared hazard library, live phone configuration and status, versioned run results, capability rotation, and the durable immutable report | B; C verifies release | A second browser queued config v3, the operator completed it, and the unauthenticated report verifier fetched every durable asset | Convex does not execute the GPU simulation and never stores provider credentials |
+| **[Convex](https://convex.dev/)** | Shared hazard library, live phone configuration and status, versioned run results, capability rotation, and the durable immutable report | B; C verifies release | A second browser queued config v5, the operator completed it, and the unauthenticated report verifier fetched every durable asset | Convex does not execute the GPU simulation and never stores provider credentials |
 | **Founders, Inc. Events** | Presenter, venue, and community | C | Correct event attribution | No invented Founders API integration |
 
-**Integration boundaries.** Marble, Tripo, and Mint keep separate attribution — a Mint artifact is never described as Tripo-generated unless a provider manifest establishes that provenance. Every integration is accompanied by a real task or model ID, or is explicitly marked incomplete in the owner's handoff. A mocked dependency never counts as a shipped integration.
+**Integration boundaries.** Marble and Mint keep separate attribution and provenance. Every claimed integration is accompanied by a real task or model ID. The procedural bulk control is never presented as generated, photo-observed, or physically measured.
 
-**Graceful degradation.** Provider outage → a visibly labeled cached world with its provenance and real preparation time. Missing Tripo → the current labeled development bulk proxy, with the sponsor integration tracked as incomplete. Missing runtime model → deterministic preset authoring, explicitly labeled, never dressed up as live model reasoning. Missing collider or unverified scale → appearance preview allowed, metric report publication disabled.
+**Graceful degradation.** Provider outage → a visibly labeled cached world with its provenance and real preparation time. Missing runtime model → deterministic preset authoring, explicitly labeled, never dressed up as live model reasoning. Missing collider or unverified scale → appearance preview allowed, metric report publication disabled.
 
-These four integrations are the team's chosen strategy. No public event rule requiring all four was found; see [docs/EVENT-SPONSORS.md](docs/EVENT-SPONSORS.md) for what is published versus assumed.
+These three integrations are the shipped strategy. No public event rule requiring every named sponsor was found; see [docs/EVENT-SPONSORS.md](docs/EVENT-SPONSORS.md) for what is published versus assumed.
 
 ---
 
@@ -236,7 +234,7 @@ Full specification: [DESIGN.md](DESIGN.md).
 ├── src/engine/                Rendering, sensing, motion, collision, metrics
 ├── src/runtime/               Convex bridge, routes, provider proxy integration
 ├── convex/                    Persistent sessions, runs, assets, immutable reports
-├── services/provider/         Loopback-only Marble/Tripo/cache service and checks
+├── services/provider/         Loopback-only Marble/cache service and checks
 ├── public/demo/               Sanitized cached Marble fallback and provenance
 ├── public/mint/               Mint rover GLB, preview, and provenance
 ├── shared/contracts.ts        Frozen serializable contract v1
@@ -269,7 +267,7 @@ npm --prefix services/provider run preflight
 
 ### Start the live operator
 
-The current account has no Tripo generation credits, so the reproducible release path explicitly enables the labeled development proxy:
+The reproducible release uses the cached Marble world, the real Mint rover asset, and an explicitly authored procedural bulk control:
 
 ```bash
 # One-time backend/schema update when needed
@@ -277,7 +275,7 @@ npm --prefix services/provider run deploy:dev
 
 # Seed or refresh the cached demo, then keep the provider running
 VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
-  npm --prefix services/provider run seed:demo -- --development-proxy
+  npm --prefix services/provider run seed:demo
 VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
   npm --prefix services/provider run dev
 ```
@@ -317,7 +315,7 @@ export BLINDSPOT_ENV_FILE=/absolute/private/path/Blindspot.env
 
 | Variable | Consumer | Nature |
 | --- | --- | --- |
-| `WORLD_LABS_API_KEY`, `TRIPO_API_KEY` | Local Node provider service only | Secret — never bundled, never uploaded |
+| `WORLD_LABS_API_KEY` | Local Node provider service only | Secret — never bundled, never uploaded |
 | `MODEL_API_KEY`, `MODEL_BASE_URL`, `MODEL_ID` | Local provider service, optional authoring | Secret / local |
 | `CONVEX_DEPLOY_KEY` | CLI only | Secret — never imported in application code |
 | `VITE_CONVEX_URL` | Browser | Public configuration; the `.convex.cloud` URL |
@@ -329,7 +327,7 @@ export BLINDSPOT_ENV_FILE=/absolute/private/path/Blindspot.env
 
 The React Convex client takes the **cloud** URL (`https://….convex.cloud`); `https://….convex.site` is for HTTP Actions. `VITE_PUBLIC_APP_ORIGIN` must be the deployed HTTPS origin — localhost is never a public share origin, and if the variable is unset, controller and report share links are `null` and sharing is disabled with a setup message rather than a broken URL.
 
-**Remaining external access:** Tripo generation credits are required to replace the labeled development bulk proxy; runtime model credentials are required to replace preset authoring; a permitted real site image plus reference dimension is required to replace the generated warehouse demo. Mint generation, Convex, Marble cache restore, and public hosting are complete. Details: [docs/SETUP.md](docs/SETUP.md).
+**Remaining external access:** runtime model credentials are required to replace preset authoring, and a permitted real site image plus reference dimension is required to replace the generated warehouse demo. Mint generation, Convex, Marble cache restore, and public hosting are complete. Details: [docs/SETUP.md](docs/SETUP.md).
 
 ---
 
@@ -339,7 +337,7 @@ The React Convex client takes the **cloud** URL (`https://….convex.cloud`); `h
 
 1. A prepared Marble world with splats, an aligned collider, and measured or explicitly estimated scale with source-photo provenance.
 2. A ground robot with bounded motion and finite braking on one straight or gently bent route.
-3. Three hazards — two exact procedural cables with different dimensions and ranges, plus one normalized bulk obstacle with an explicit collision box — and a Mint-generated robot body. Tripo is the intended bulk-visual provider; the release deviation is documented below.
+3. Three authored hazards — two exact procedural cables with different dimensions and ranges, plus one procedural bulk obstacle with an explicit collision box — and a real Mint-generated robot body.
 4. One passive-stereo approximation: depth and proxy render, coherent intrinsics, a thin-target visibility threshold, and late detection with finite braking.
 5. Truth and perception views at the same pose and timestamp — geometry drives collision, degraded points drive stop decisions.
 6. A full-route diagnostic scan for coverage plus one reactive outcome run, with honest metrics.
@@ -373,10 +371,10 @@ A passing planning check is not proof that the application works. The release wa
 | `npm --prefix services/provider test` | 18/18 pass |
 | `npm --prefix services/provider run test:backend` | 23/23 pass, including owner-only controller capability rotation |
 | `npm --prefix services/provider run cache:restore` | Pass; checksum restoration, zero paid calls |
-| Live browser flow | Baseline v2 completed; phone queued higher-resolution v3; operator completed matching v3; report published |
-| Unauthenticated report verifier | Snapshot hash `76aa9e74194b574390d97fb2ee7ef0fcb2f18fbc040e0110489c2781edefdaeb`; Marble SPZ/collider and Mint GLB downloaded over HTTPS with matching SHA-256 values |
+| Live browser flow | Mint-only scenario v3 completed higher-resolution config v4 and phone-requested baseline config v5; both reports published |
+| Unauthenticated report verifier | Snapshot hash `9c16b0de09f5a9a10cb9a5bb3c9c2e695e2b15db165034b4a599092744d51b5f`; Marble SPZ/collider and Mint GLB downloaded over HTTPS with matching SHA-256 values |
 
-The browser flow uses real Convex synchronization and client-computed simulation, not fixture state. The final higher-resolution result is still `blind_spot_observed`: 2/3 hazards were detected before the boundary, with 0/1 false stops. Full gates: [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md). Release evidence: [docs/evidence/c/RELEASE-VERIFICATION.md](docs/evidence/c/RELEASE-VERIFICATION.md).
+The browser flow uses real Convex synchronization and client-computed simulation, not fixture state. The final baseline result is `blind_spot_observed`: 2/3 hazards were detected before the boundary, the platform collided, and false-stop rate is correctly undefined because it never stopped. The higher-resolution comparison detected 3/3 but made one false stop. Full gates: [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md). Release evidence: [docs/evidence/c/RELEASE-VERIFICATION.md](docs/evidence/c/RELEASE-VERIFICATION.md).
 
 ---
 
@@ -419,7 +417,7 @@ Stated plainly, because the product's entire premise is that stated assumptions 
 - **The robot is kinematic with braking.** Not rigid-body dynamics.
 - **Ninety seconds is a target, not a measurement.** Fresh Marble generation is asynchronous and typically takes minutes; the 90-second figure applies to evaluating a *cached* world and remains unmeasured until timed.
 - **Authored hazards are stress tests.** The report distinguishes photo-confirmed elements from authored hazards, always.
-- **Tripo remains externally blocked.** The adapter is tested, but the authorized account reported no available generation credits. The release uses a conspicuously named development bulk proxy and claims no Tripo artifact.
+- **Bulk appearance is intentionally simple.** The crate is an authored procedural control with assumed dimensions and return behavior; only the Mint rover is claimed as a generated 3D asset.
 - **The demo site is generated.** The cached Marble warehouse was produced from a text prompt, not a real venue photograph. Its assumed scale reference and uncertainty remain visible.
 - **Runtime authoring is deterministic.** No runtime model credentials were configured, so the supported sentence path uses the labeled preset parser.
 - **Recorded frame playback is tab-local.** Completed result summaries survive reload through Convex, but the high-volume transient point frames are not uploaded; rerun on the operator after a reload to recreate playback.
@@ -433,6 +431,6 @@ Stated plainly, because the product's entire premise is that stated assumptions 
 
 No license has been declared for this repository. Do not assume permission to copy, redistribute, or reuse the source or bundled assets beyond rights you already have. Generated assets remain subject to their providers' terms; the bundled Marble and Mint artifacts carry sanitized provenance and checksums. No Tripo-generated asset is included in this release.
 
-Blindspot is an independent hackathon project. World Labs, Tripo, mint.gg, Convex, and Founders, Inc. are named as event sponsors and as the providers of the technologies integrated here; naming them implies no endorsement of this project or its findings.
+Blindspot is an independent hackathon project. World Labs, Tripo, mint.gg, Convex, and Founders, Inc. are named as event sponsors; World Labs, mint.gg, and Convex are the providers integrated in this release. Naming them implies no endorsement of this project or its findings.
 
 Repository: <https://github.com/psagar29/Blindspot.git>

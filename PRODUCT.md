@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-User-specified: React, React Three Fiber, Three.js, SparkJS, World Labs Marble, Tripo, Convex, Mint. Implementation decision for this plan: TypeScript + Vite; a local Node provider service; no Next.js server or second frontend framework. Actual compatible dependency versions are pinned together by A during bootstrap.
+Release stack: React, React Three Fiber, Three.js, SparkJS, World Labs Marble, Convex, and a real Mint-generated rover artifact. Implementation decision: TypeScript + Vite; a local Node provider service; no Next.js server or second frontend framework. Actual compatible dependency versions are pinned together by A during bootstrap.
 
 ## Users
 
