@@ -15,6 +15,11 @@ export const world:World={id:'test-world',version:1,name:'Explicit test fixture'
   calibration:{status:'verified',source:'estimated_reference',splatToWorld:identity,colliderToWorld:identity,correctionFactor:1,uncertaintyNote:'Unit-test fixture only.'}};
 const bulk:HazardLibraryItem={id:'fixture-box',version:1,name:'Fixture control box',type:'bulk',dimensionsM:[0.7,0.55,0.6],dimensionEvidence:'assumed',materialClass:'opaque',returnAssumption:'Test fixture.'};
 const scenario=createScenario(world,bulk),base=createSensorConfig('baseline');
+test('live scenarios attach the real Mint visual without changing the physical envelope',()=>{
+  assert.equal(scenario.platform.visualAsset?.source,'mint');
+  assert.equal(scenario.platform.visualAsset?.sha256,'85f69933396b670d9b46c8d3cdd61167a106567e3a28b0ff9ad15693ce3bc845');
+  assert.equal(scenario.platform.radiusM,0.25);assert.equal(scenario.platform.heightM,0.7);
+});
 test('projection/back-projection round trip uses actual raster focal length and rejects invalid depths',()=>{
   const s=base.sensors[0];assert.ok(Math.abs(intrinsics(s).fx-80)<1e-10);
   const p=project([0.3,0.1,-5],s)!;const back=backProject(p.u,p.v,p.depth,s)!;

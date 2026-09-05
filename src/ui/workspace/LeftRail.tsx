@@ -8,9 +8,9 @@ function SourcePhoto({ state }: Pick<RuntimeBridge, "state">) {
   const world = state.world;
   if (!world) return null;
   return (
-    <section aria-label="Source photo and world status">
+    <section aria-label="Source image and world status">
       <div className="bs-source-photo">
-        <img src={world.sourcePhotoUrl} alt={`Source photo for ${world.name}`} />
+        <img src={world.sourcePhotoUrl} alt={`Source image for ${world.name}`} />
         {state.mode === "fixture" ? (
           <span className="bs-source-photo-tag">
             <Badge tone="amber">Fixture</Badge>

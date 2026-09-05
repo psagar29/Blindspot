@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { repoRoot, type Config } from './config';
 import { Providers, ProviderError, atomicJson, digest, type Job } from './providers';
 import type { World } from '../../../shared/contracts';
+import { MINT_PLATFORM_ASSET } from '../../../src/engine/scenario';
 
 export async function restoreDemo(c:Config){
   const directory=join(repoRoot,'public/demo'),world:World=JSON.parse(await readFile(join(directory,'world.json'),'utf8'));
@@ -11,6 +12,15 @@ export async function restoreDemo(c:Config){
     if(!/^[a-f0-9]{64}\.(spz|glb|jpg)$/.test(name))throw new ProviderError('BUNDLE','Unexpected bundled asset name.');
     const bytes=await readFile(join(directory,name));if(digest(bytes)!==name.split('.')[0])throw new ProviderError('BUNDLE_HASH','Bundled asset checksum mismatch.');
     await providers.storeBytes(bytes,name);
+  }
+  const mintFiles=[
+    {source:'teal-stripe-scout-rover.glb',target:MINT_PLATFORM_ASSET.url.split('/').pop()!,sha256:MINT_PLATFORM_ASSET.sha256},
+    {source:'teal-stripe-scout-rover-preview.webp',target:MINT_PLATFORM_ASSET.thumbnailUrl!.split('/').pop()!,sha256:MINT_PLATFORM_ASSET.thumbnailUrl!.split('/').pop()!.split('.')[0]!},
+  ];
+  for(const file of mintFiles){
+    const bytes=await readFile(join(repoRoot,'public/mint',file.source));
+    if(digest(bytes)!==file.sha256)throw new ProviderError('MINT_BUNDLE_HASH','Bundled Mint asset checksum mismatch.');
+    await providers.storeBytes(bytes,file.target);
   }
   try{await providers.get(job.id);}catch(e){if(!(e instanceof ProviderError)||e.code!=='JOB_NOT_FOUND')throw e;await atomicJson(join(c.cacheDir,'jobs',`${job.id}.json`),job);}
   try{await readFile(join(c.cacheDir,'marble-demo.json'));}catch{await atomicJson(join(c.cacheDir,'marble-demo.json'),world);}

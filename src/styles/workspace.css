@@ -43,6 +43,10 @@
   flex: 1;
 }
 
+.bs-action-short {
+  display: none;
+}
+
 /* ---------- Workspace grid ---------- */
 .bs-workspace {
   flex: 1;
@@ -410,6 +414,19 @@
   color: var(--bs-text-secondary);
 }
 
+.bs-share-details {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--bs-s3);
+}
+
+.bs-share-details .bs-btn {
+  text-decoration: none;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 1180px) {
   .bs-workspace,
@@ -471,6 +488,24 @@
   .bs-topbar {
     padding: 0 var(--bs-s3);
     gap: var(--bs-s2);
+  }
+
+  .bs-topbar-site,
+  .bs-topbar-mode {
+    display: none;
+  }
+
+  .bs-topbar-connection .bs-badge {
+    padding-inline: var(--bs-s2);
+  }
+
+  .bs-topbar-connection .bs-badge-label,
+  .bs-action-full {
+    display: none;
+  }
+
+  .bs-action-short {
+    display: inline;
   }
 
   .bs-btn {

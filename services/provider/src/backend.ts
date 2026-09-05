@@ -31,7 +31,7 @@ export async function seedDemo(c:Config,developmentProxy=false) {
   try{bootstrap=JSON.parse(await readFile(file,'utf8'));if(bootstrap.developmentProxy&&!developmentProxy){bootstrap.developmentProxy=false;bootstrap.ready=false;}
     else if(bootstrap.developmentProxy!==developmentProxy)throw new ProviderError('BOOTSTRAP_MODE','A real-asset session cannot be downgraded to the development proxy.');}
   catch(e){if(e instanceof ProviderError)throw e;bootstrap={sessionId:randomUUID(),ownerToken:randomBytes(32).toString('base64url'),controllerToken:randomBytes(32).toString('base64url'),developmentProxy};await atomicJson(file,bootstrap);}
-  if(bootstrap.ready)return {sessionId:bootstrap.sessionId,ready:true,developmentProxy};
+  const refreshing=bootstrap.ready===true;
   const initial=createScenario(world,bulk);const library=[...cableLibrary(),bulk];
   await runConvex(c,['run','seed:bootstrap',JSON.stringify({sessionId:bootstrap.sessionId,ownerCapabilityHash:digest(bootstrap.ownerToken),controllerCapabilityHash:digest(bootstrap.controllerToken),world,library,scenario:initial,baselineConfig:createSensorConfig('baseline')})]);
   const client=new ConvexHttpClient(c.convexUrl),auth={sessionId:bootstrap.sessionId,token:bootstrap.ownerToken};
@@ -54,10 +54,13 @@ export async function seedDemo(c:Config,developmentProxy=false) {
   if(bulk.asset)bulk=nextSnapshot({...bulk,asset:{...bulk.asset,url:await durable(bulk.asset.url)}},(await query('library:list',{sessionId:bootstrap.sessionId})).find((item:HazardLibraryItem)=>item.id===bulk.id)??null);
   await mutation('worlds:ingest',{...auth,world,inputHash:digest(`durable:${world.id}`)});
   if(bulk.asset)await mutation('library:ingest',{...auth,item:bulk,requestHash:digest(`durable:${bulk.id}`)});
-  const scenario=nextSnapshot({...createScenario(world,bulk,initial.sentence),id:existing.scenario.id},existing.scenario);
+  const preparedScenario=createScenario(world,bulk,initial.sentence);
+  const localVisual=preparedScenario.platform.visualAsset;
+  const visualAsset=localVisual?{...localVisual,url:await durable(localVisual.url),...(localVisual.thumbnailUrl?{thumbnailUrl:await durable(localVisual.thumbnailUrl)}:{})}:undefined;
+  const scenario=nextSnapshot({...preparedScenario,id:existing.scenario.id,platform:{...preparedScenario.platform,...(visualAsset?{visualAsset}:{})}},existing.scenario);
   await mutation('scenarios:create',{...auth,scenario});bootstrap.ready=true;await atomicJson(file,bootstrap);
   await atomicJson(join(c.cacheDir,'durable-demo.json'),{world,bulk,scenario});
-  return {sessionId:bootstrap.sessionId,ready:true,developmentProxy};
+  return {sessionId:bootstrap.sessionId,ready:true,developmentProxy,refreshing};
 }
 
 export async function publishDemo(c:Config,runId?:string){

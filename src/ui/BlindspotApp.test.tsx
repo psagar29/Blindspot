@@ -116,6 +116,20 @@ describe("BlindspotApp controller", () => {
     expect(screen.queryByText("Baseline stereo")).not.toBeInTheDocument();
     bridge.dispose();
   });
+
+  it("links the controller to the latest published immutable report", async () => {
+    const bridge = createFixtureBridge({
+      initialPath: "/control/sess-fixture-01",
+      publicOrigin: "https://blindspot.example",
+    });
+    bridge.dev.loadPreset("published");
+    render(<Host bridge={bridge} />);
+    expect(await screen.findByRole("link", { name: "Open published report" })).toHaveAttribute(
+      "href",
+      "https://blindspot.example/reports/rpt-fixture-0001",
+    );
+    bridge.dispose();
+  });
 });
 
 describe("BlindspotApp report", () => {

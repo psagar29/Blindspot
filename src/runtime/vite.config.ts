@@ -1,5 +1,5 @@
 import { defineConfig, mergeConfig } from 'vite';
-import baseline from '../../vite.config';
+import baseline from '../../vite.config.ts';
 
 // B's isolated harness adds the protected local-service proxy without editing A's root config.
 export default defineConfig(async env=>mergeConfig(typeof baseline==='function'?await baseline(env):baseline,{

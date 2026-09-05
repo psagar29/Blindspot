@@ -31,9 +31,13 @@ export function TopBar(
       <span className="bs-topbar-site" title={state.session?.siteName}>
         {state.session ? state.session.siteName : "No session"}
       </span>
-      <ModeBadge mode={state.mode} />
+      <span className="bs-topbar-mode">
+        <ModeBadge mode={state.mode} />
+      </span>
       <span className="bs-topbar-spacer" />
-      <ConnectionBadge connection={state.connection} />
+      <span className="bs-topbar-connection">
+        <ConnectionBadge connection={state.connection} />
+      </span>
       <button
         type="button"
         className="bs-btn"
@@ -43,14 +47,11 @@ export function TopBar(
       >
         Sensors
       </button>
-      {state.status === "published" && state.report ? (
-        <button
-          type="button"
-          className="bs-btn bs-btn--primary"
-          onClick={() => actions.navigate(`/reports/${state.report!.id}`)}
-        >
-          View report
-        </button>
+      {state.reportUrl ? (
+        <a className="bs-btn bs-btn--primary" href={state.reportUrl} aria-label="Open published report">
+          <span className="bs-action-full">View report</span>
+          <span className="bs-action-short" aria-hidden="true">Report</span>
+        </a>
       ) : (
         <button
           type="button"
@@ -64,8 +65,16 @@ export function TopBar(
               : "Publish an immutable Site Blind Spot Report"
           }
           onClick={() => void actions.publishReport()}
+          aria-label="Publish report"
         >
-          {state.status === "publishing" ? "Publishing…" : "Publish report"}
+          {state.status === "publishing" ? (
+            "Publishing…"
+          ) : (
+            <>
+              <span className="bs-action-full">Publish report</span>
+              <span className="bs-action-short" aria-hidden="true">Publish</span>
+            </>
+          )}
         </button>
       )}
     </header>

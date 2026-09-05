@@ -126,15 +126,10 @@ export function PhoneController(props: RuntimeBridge & { route: Extract<RouteSta
             ) : (
               <p className="bs-support">Not evaluated. Results appear after the operator completes a run.</p>
             )}
-            {state.report ? (
-              <button
-                type="button"
-                className="bs-btn"
-                style={{ minHeight: 44 }}
-                onClick={() => actions.navigate(`/reports/${state.report!.id}`)}
-              >
+            {state.reportUrl ? (
+              <a className="bs-btn" style={{ minHeight: 44 }} href={state.reportUrl}>
                 Open published report
-              </button>
+              </a>
             ) : null}
           </section>
         </>

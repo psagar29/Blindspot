@@ -76,6 +76,45 @@ describe("capabilities and execution ownership", () => {
     for (const call of forbidden) await expect(call()).rejects.toThrow("capability");
   });
 
+  it("lets the owner revoke and rotate the controller capability", async () => {
+    const { t } = await setup();
+    const nextControllerToken = "controller_capability_rotated_abcdefghijklmnop";
+    const controllerCapabilityHash = await capabilityHash(nextControllerToken);
+
+    await expect(
+      t.mutation(api.sessions.rotateControllerCapability, {
+        sessionId,
+        token: controllerToken,
+        controllerCapabilityHash,
+      }),
+    ).rejects.toThrow("capability");
+
+    await expect(
+      t.mutation(api.sessions.rotateControllerCapability, {
+        sessionId,
+        token: ownerToken,
+        controllerCapabilityHash,
+      }),
+    ).resolves.toEqual({ rotated: true });
+
+    await expect(
+      t.mutation(api.configs.request, {
+        sessionId,
+        token: controllerToken,
+        presetId: "higher_resolution",
+        clientRequestId: "revoked-controller",
+      }),
+    ).rejects.toThrow("capability");
+    await expect(
+      t.mutation(api.configs.request, {
+        sessionId,
+        token: nextControllerToken,
+        presetId: "higher_resolution",
+        clientRequestId: "rotated-controller",
+      }),
+    ).resolves.toEqual({ configVersion: 2 });
+  });
+
   it("deduplicates request IDs, enforces presets and keeps offline sessions queued", async () => {
     const { t, data } = await setup();
     const args = { sessionId, token: controllerToken, presetId: "higher_resolution", clientRequestId: "phone-request-1" };
@@ -173,6 +212,7 @@ describe("capabilities and execution ownership", () => {
     await registerDurableAssets(t, data.scenario);
     const published = await t.mutation(api.reports.publish, { runId: run.runId, token: ownerToken });
     expect(await t.mutation(api.reports.publish, { runId: run.runId, token: ownerToken })).toEqual(published);
+    expect((await t.query(api.sessions.getPublic, { sessionId })).latestReportId).toBe(published.reportId);
     const snapshot = await t.query(api.reports.get, published);
     expect(snapshot.status).toBe("blind_spot_observed");
     await t.mutation(api.library.ingest, { sessionId, token: ownerToken, item: plain({ ...data.library[0], version: 2, name: "Later library edit" }) });

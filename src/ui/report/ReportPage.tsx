@@ -102,7 +102,7 @@ function ReportBody({ report, mode }: { report: ReportSnapshot; mode: RuntimeBri
           <span className="bs-wordmark">
             Blind<em>spot</em>
           </span>
-          <ModeBadge mode={mode} />
+          {mode === "fixture" ? <ModeBadge mode={mode} /> : <Badge>Immutable snapshot</Badge>}
           <span className="bs-topbar-spacer" />
           <span className="bs-meta bs-mono">{report.id}</span>
         </div>
@@ -123,7 +123,7 @@ function ReportBody({ report, mode }: { report: ReportSnapshot; mode: RuntimeBri
       <section aria-label="Site and world">
         <h2>Site and world</h2>
         <div className="bs-report-photo">
-          <img src={world.sourcePhotoUrl} alt={`Source photo for ${world.name}`} />
+          <img src={world.sourcePhotoUrl} alt={`Source image for ${world.name}`} />
         </div>
         <dl>
           <Kv k="World">{world.name} (v{world.version})</Kv>

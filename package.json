@@ -5,12 +5,13 @@
   "type": "module",
   "description": "Blindspot — expose what a robot cannot see. Hackathon prototype frontend/runtime workspace.",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config src/runtime/vite.config.ts",
     "dev:ui": "vite --mode ui --open /ui.html",
     "dev:engine": "vite --mode engine --open /engine.html",
     "build": "vite build",
     "build:ui": "vite build --mode ui",
     "build:engine": "vite build --mode engine",
+    "preview": "vite preview",
     "preview:ui": "vite preview --mode ui",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.node.json --noEmit",
     "test": "vitest run --passWithNoTests"

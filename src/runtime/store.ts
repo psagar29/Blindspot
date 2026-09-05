@@ -68,8 +68,8 @@ export class RuntimeStore {
     this.leaseExpiresAt=result.leaseExpiresAt;
     const controllerUrl=this.local?.bootstrap?.controllerToken?publicLink(`/control/${sessionId}#token=${encodeURIComponent(this.local.bootstrap.controllerToken)}`):null;
     const scenario=result.scenario as unknown as Scenario;
-    this.patch({mode:this.local?.bootstrap?.developmentProxy||scenario.hazards.some(h=>h.libraryItem.id==='development-box')?'fixture':'live',connection:'connected',session:{...result.session,controllerUrl},...(!this.editing?{world:result.world as World,scenario,library:result.library as unknown as HazardLibraryItem[],config:result.config as unknown as SensorConfig}:{}),
-      latestRun:result.latestRun as AppState['latestRun'],...(!this.busy?{status:result.status as AppState['status']}:{}),stageLabel:result.status==='queued'?'Sensor configuration queued. Waiting for the operator.':null});this.deriveCapabilities();
+    this.patch({mode:'live',connection:'connected',session:{...result.session,controllerUrl},...(!this.editing?{world:result.world as World,scenario,library:result.library as unknown as HazardLibraryItem[],config:result.config as unknown as SensorConfig}:{}),
+      latestRun:result.latestRun as AppState['latestRun'],reportUrl:result.latestReportId?publicLink(`/reports/${result.latestReportId}`):null,...(!this.busy?{status:result.status as AppState['status']}:{}),stageLabel:result.status==='queued'?'Sensor configuration queued. Waiting for the operator.':null});this.deriveCapabilities();
   },e=>this.fail(e));}
   private updateOnline(){if(this.client&&!navigator.onLine)this.patch({connection:'offline'});else if(this.client)this.patch({connection:this.client.connectionState().isWebSocketConnected?'connected':'connecting'});if(this.state.session)this.patch({session:{...this.state.session,operatorOnline:this.leaseExpiresAt>Date.now()&&this.state.connection!=='offline'}});}
   attachScene(scene:WorldScene|null){this.scene=scene;this.deriveCapabilities();}
@@ -121,7 +121,10 @@ export class RuntimeStore {
     const current=await this.client!.query(api.sessions.getPublic,{sessionId:auth.sessionId});
     const id=current?.scenario.world.id===world.id?current.scenario.id:`scenario-${world.id}`;
     const previousScenario=await this.client!.query(api.scenarios.latest,{...auth,scenarioId:id}) as unknown as Scenario|null;
-    const scenario=nextSnapshot({...createScenario(prepared,bulk,sentence),id},previousScenario);
+    const preparedScenario=createScenario(prepared,bulk,sentence);
+    const localVisual=preparedScenario.platform.visualAsset;
+    const visualAsset=localVisual?{...localVisual,url:await this.durableUrl(localVisual.url,localVisual.sha256),...(localVisual.thumbnailUrl?{thumbnailUrl:await this.durableUrl(localVisual.thumbnailUrl)}:{})}:undefined;
+    const scenario=nextSnapshot({...preparedScenario,id,platform:{...preparedScenario.platform,...(visualAsset?{visualAsset}:{})}},previousScenario);
     await this.client!.mutation(api.scenarios.create,wire({...auth,scenario}));return scenario;
   }
   actions:AppActions={

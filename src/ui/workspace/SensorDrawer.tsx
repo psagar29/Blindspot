@@ -99,7 +99,12 @@ export function SensorDrawer(props: RuntimeBridge & { open: boolean; onClose: ()
       {session?.controllerUrl ? (
         <div className="bs-share-qr">
           <QrImage value={session.controllerUrl} label={`QR code for the phone controller of ${session.siteName}`} />
-          <span className="bs-share-url">{session.controllerUrl.replace(/#.*$/, "#…")}</span>
+          <div className="bs-share-details">
+            <span className="bs-share-url">{session.controllerUrl.replace(/#.*$/, "#…")}</span>
+            <a className="bs-btn" href={session.controllerUrl} target="_blank" rel="noreferrer">
+              Open controller
+            </a>
+          </div>
         </div>
       ) : (
         <InfoCallout title="Sharing disabled">
@@ -112,7 +117,9 @@ export function SensorDrawer(props: RuntimeBridge & { open: boolean; onClose: ()
           <h2 className="bs-section-title" style={{ marginTop: "var(--bs-s3)" }}>
             Published report
           </h2>
-          <span className="bs-share-url">{state.reportUrl}</span>
+          <a className="bs-share-url" href={state.reportUrl} target="_blank" rel="noreferrer">
+            {state.reportUrl}
+          </a>
         </>
       ) : null}
     </aside>

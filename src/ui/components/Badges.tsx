@@ -25,7 +25,7 @@ export function ConnectionBadge({ connection }: { connection: AppState["connecti
   return (
     <Badge tone={tone} title={`Session connection: ${CONNECTION_LABEL[connection]}`}>
       <span className="bs-dot" aria-hidden="true" />
-      {CONNECTION_LABEL[connection]}
+      <span className="bs-badge-label">{CONNECTION_LABEL[connection]}</span>
     </Badge>
   );
 }
