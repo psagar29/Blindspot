@@ -1,0 +1,67 @@
+/* Blindspot design tokens — DESIGN.md is the source of truth. */
+:root {
+  /* Surfaces: one base material for canvas and controls. */
+  --bs-surface: #e8ecef;
+  --bs-surface-well: #e2e7ea; /* slightly recessed grouping, still same material family */
+  --bs-report-surface: #fbfcfd;
+
+  /* Neumorphic depth. Raised = clickable/grouped. Inset = input/selected/recessed. */
+  --bs-shadow-raised: 8px 8px 18px #c7ccd1, -8px -8px 18px #ffffff;
+  --bs-shadow-inset: inset 4px 4px 9px #c7ccd1, inset -4px -4px 9px #ffffff;
+  --bs-shadow-compact: 3px 3px 7px #c7ccd1, -3px -3px 7px #ffffff;
+  --bs-shadow-compact-inset: inset 2px 2px 5px #c7ccd1, inset -2px -2px 5px #ffffff;
+
+  /* Text */
+  --bs-text: #202a32;
+  --bs-text-secondary: #4d5b66;
+  --bs-text-on-dark: #eef3f6;
+
+  /* Lines and focus */
+  --bs-border: #aab4bd;
+  --bs-focus: #006b78;
+
+  /* Viewport */
+  --bs-viewport: #111820;
+  --bs-viewport-grid: #25333d;
+
+  /* Accents — never color alone */
+  --bs-teal: #006b78;
+  --bs-teal-soft: #d7e6e8;
+  --bs-rust: #a33422;
+  --bs-rust-soft: #ecdbd6;
+  --bs-amber: #8a6d1f;
+
+  /* Radii */
+  --bs-r-control: 10px;
+  --bs-r-panel: 18px;
+  --bs-r-viewport: 24px;
+
+  /* Spacing scale: 4 8 12 16 24 32 48 */
+  --bs-s1: 4px;
+  --bs-s2: 8px;
+  --bs-s3: 12px;
+  --bs-s4: 16px;
+  --bs-s5: 24px;
+  --bs-s6: 32px;
+  --bs-s7: 48px;
+
+  /* Type */
+  --bs-font-ui: "Manrope", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --bs-font-mono: "IBM Plex Mono", "SF Mono", "Consolas", monospace;
+  --bs-fs-meta: 12px;
+  --bs-fs-support: 14px;
+  --bs-fs-body: 16px;
+  --bs-fs-section: 20px;
+  --bs-fs-title: 28px;
+
+  /* Motion */
+  --bs-t-control: 170ms ease;
+  --bs-t-panel: 300ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --bs-t-control: 0ms linear;
+    --bs-t-panel: 0ms linear;
+  }
+}
