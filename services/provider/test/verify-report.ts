@@ -12,7 +12,7 @@ assert.ok(report);assert.equal(report.id,reportId);
 const json=JSON.stringify(report),sha256=createHash('sha256').update(json).digest('hex');
 if(process.argv[3])assert.equal(sha256,process.argv[3],'Published snapshot changed.');
 assert.ok(!/ownerToken|controllerToken|capabilityHash|localToken|WLT-Api-Key/.test(json));
-const assets=[report.scenario.world.splat,report.scenario.world.collider,...report.scenario.hazards.flatMap(h=>h.libraryItem.asset?[h.libraryItem.asset]:[])];
+const assets=[report.scenario.world.splat,report.scenario.world.collider,...report.scenario.hazards.flatMap(h=>h.libraryItem.asset?[h.libraryItem.asset]:[]),...(report.scenario.platform.visualAsset?[report.scenario.platform.visualAsset]:[])];
 const verified=[];
 for(const asset of assets){assert.equal(new URL(asset.url).protocol,'https:');const r=await fetch(asset.url,{redirect:'error'});assert.equal(r.status,200);const bytes=Buffer.from(await r.arrayBuffer());assert.equal(createHash('sha256').update(bytes).digest('hex'),asset.sha256);verified.push({id:asset.id,bytes:bytes.length,sha256:asset.sha256});}
 const image=await fetch(report.scenario.world.sourcePhotoUrl,{redirect:'error'});assert.equal(image.status,200);

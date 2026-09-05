@@ -12,7 +12,7 @@
 | 1:22–1:48 | Open the public Site Blind Spot Report. Point to one hazard, its diameter/range/reason, source provenance and metric denominator. “This is the review artifact the operator can share.” |
 | 1:48–2:00 | “We identify failures under stated assumptions. We do not certify safety.” Optional second site/aerial only if already proven and it fits inside two minutes; replace a beat, do not extend the script. |
 
-A's visible Mint robot and B's Tripo library asset should be recognizable; mention the four sponsor roles briefly while moving through the relevant views. Do not recite an infrastructure slide.
+The visible Mint robot should be recognizable. State that the bulk obstacle is the labeled development proxy because Tripo authenticated but had no available credits; do not imply that a Tripo artifact shipped. Mention Marble, Mint, and Convex while moving through their visible contributions rather than reciting an infrastructure slide.
 
 ## Before the room sees it
 
@@ -35,4 +35,4 @@ Fallback order: real cached run → visibly labeled recorded playback → backup
 
 Internal checklist, **not an assertion of unpublished event rules**: repo main URL and exact commit, public demo/controller entry, example report URL, concise description, track, team names, real sponsor contributions, short backup recording, limitations and generation/evaluation timings. Confirm required fields/form and allowed prior work with organizers. Owner submits by the published 18:00 PDT deadline; target 17:45 for buffer.
 
-Suggested description: “Blindspot turns a site photo into a generated world, evaluates a ground robot's simplified perception against authored hazards, and publishes a reproducible report of modeled blind spots. It combines Marble world exports, Tripo hazard assets, a Mint MCP robot asset, and Convex live configuration and reporting.” Change this to reflect what actually shipped; remove any integration that remains incomplete.
+Release description: “Blindspot evaluates a ground robot's simplified perception inside a generated Marble world and publishes a reproducible report of modeled blind spots. It combines real Marble world exports, a Mint-generated rover, and Convex live configuration/reporting. The Tripo bulk-asset path is implemented but the demo uses a clearly labeled development proxy because the authorized account had no generation credits.”

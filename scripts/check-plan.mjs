@@ -41,6 +41,6 @@ if (errors.length) {
   console.error(errors.join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Planning kit OK: ${required.length} required files, relative links, contract symbols, blank credentials template.`);
-  console.log('This checks planning structure only; application and physics acceptance remain future work.');
+  console.log(`Release structure OK: ${required.length} required files, relative links, contract symbols, blank credentials template.`);
+  console.log('This checks documentation structure only; run the type, test, build, and live acceptance commands separately.');
 }

@@ -1,10 +1,10 @@
 # Setup and access
 
-## Already prepared versus still required
+## Release setup
 
-The GitHub baseline is a planning kit, not a deployed app. `node scripts/check-plan.mjs` validates the handoff documents and basic contract presence; it does not test physics. A creates the frontend toolchain at A0; B creates the local service and Convex implementation.
+The application is implemented and publicly hosted. `node scripts/check-plan.mjs` validates the handoff documents and contract presence; the runtime checks are listed in the root README and Person C handoff.
 
-Provided privately by the owner: World Labs API key, Tripo API key, and a Convex dev deployment credential. They are stored only in the owner's ignored local `.env.local`. No credential validity, paid generation, asset export, or live backend change was tested during plan preparation.
+Provider and Convex credentials remain in an owner-controlled file outside the checkout and are loaded only through `BLINDSPOT_ENV_FILE`. The release preflight verified Marble authorization and available credits, Tripo authorization with no available credits, and the intended Convex dev deployment. Values are never printed or copied into the repository.
 
 Public configuration supplied by owner:
 
@@ -13,7 +13,7 @@ Public configuration supplied by owner:
 
 These URLs are not secret. React's Convex client takes the **cloud** URL, not the HTTP Actions URL. A deploy credential targeting a dev deployment does not establish that a production deployment exists.
 
-Still required: Mint OAuth on A's machine, runtime model API access if model authoring is desired, a permitted source image/reference dimension, and hosting/account access for C. The user-provided coding-model names do not supply a runtime endpoint. Nothing in a Git clone transfers local secrets or authenticated accounts.
+Still required for the remaining gaps: Tripo generation credits, runtime model API access if model authoring is desired, and a permitted real site image/reference dimension. Mint generation, public hosting, and live Convex synchronization are complete. Nothing in a Git clone transfers local secrets or authenticated accounts.
 
 ## A
 
@@ -29,14 +29,14 @@ Use the Convex CLI from the pinned installed dependency. Select/verify the inten
 
 Preflight returns only `configured`, `reachable`, `authorized`, `missing`, or a sanitized error. Do not run commands that print full env listings. Check account/project identity and supported model/export fields with the least costly documented operation before generating. Cache one fallback first and only one or two reusable bulk assets. Subsequent generation needs an explicit operator action with a visible budget; handle rate limiting without resubmission storms.
 
-## C
+## C / release operator
 
 Use a local integration branch only. After A/B handoffs, `npm ci` at root and in `services/provider/` must reproduce dependencies. B's README/scripts must state the exact laptop startup commands and ports. Launch local provider service, then local operator app; verify browser requests go through its same-origin proxy. Open public controller/report pages separately.
 
-Deploy static output with SPA fallback for controller/report URLs; configure only `VITE_CONVEX_URL`, `VITE_PUBLIC_APP_ORIGIN`, and `VITE_AUTHORING_ENABLED=false`. A correct deploy serves deep links on direct navigation, not only after clicking from `/`. Public reports must resolve durable storage URLs without localhost. Keep all deployment credentials local to the CLI; do not place them in cloud build settings under this owner's local-only requirement.
+The public origin is `https://blindspot-site-review.briny-comet-2324.chatgpt.site`. Deploy static output with SPA fallback for controller/report URLs; configure only `VITE_CONVEX_URL`, `VITE_PUBLIC_APP_ORIGIN`, and `VITE_AUTHORING_ENABLED=false`. A correct deploy serves deep links on direct navigation, not only after clicking from `/`. Public reports resolve durable storage URLs without localhost. Keep all deployment credentials local to the deployment tool; do not place them in cloud build settings under this owner's local-only requirement.
 
-## What can finish without additional access
+## Current access-dependent limits
 
-A: all UI and fixtures, except genuine Mint generation. B: engine math, harness, adapters, deterministic authoring and tests; real provider/Convex verification requires valid account access. C: local merge, build and review; public hosting requires its account authorization. The final handoff distinguishes tested integrations from access-dependent unfinished work.
+The checked-in fixtures, cache restore, engine, UI, and report verifier run without paid generation. Replacing the development bulk proxy requires Tripo credits. Replacing the preset parser requires a real runtime model endpoint. Generating a site-specific production review requires a permitted image and an independently checked reference dimension.
 
 The operator environment must also set `VITE_PUBLIC_APP_ORIGIN` to the deployed frontend HTTPS origin and restart Vite before generating QR/report links. Localhost is never the public share origin. B supplies the seed/bootstrap command and protected local session delivery; C does not construct capabilities or seed documents by hand.
