@@ -57,12 +57,19 @@ function AuthoringComposer({ state, actions }: RuntimeBridge) {
     <section aria-label="Scenario authoring">
       <h2 className="bs-section-title">Scenario</h2>
       {state.scenario ? (
-        <p className="bs-support" style={{ marginTop: "var(--bs-s2)" }}>
-          “{state.scenario.sentence}”{" "}
-          <Badge tone={state.scenario.authoring === "model" ? "teal" : "neutral"}>
-            {state.scenario.authoring === "model" ? "Model authored" : "Preset parser"}
-          </Badge>
-        </p>
+        <>
+          <p className="bs-support" style={{ marginTop: "var(--bs-s2)" }}>
+            “{state.scenario.sentence}”{" "}
+            <Badge tone={state.scenario.authoring === "model" ? "teal" : "neutral"}>
+              {state.scenario.authoring === "model" ? "Model authored" : "Preset parser"}
+            </Badge>
+          </p>
+          {state.scenario.platform.visualAsset?.source === "mint" ? (
+            <p className="bs-meta" style={{ marginTop: "var(--bs-s1)" }}>
+              Robot body: Mint-generated 3D asset (decorative; physical envelope is the platform geometry).
+            </p>
+          ) : null}
+        </>
       ) : null}
       {!state.capabilities.authoring ? (
         <InfoCallout title="Read-only session">

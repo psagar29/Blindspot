@@ -167,6 +167,13 @@ function ReportBody({ report, mode }: { report: ReportSnapshot; mode: RuntimeBri
           <Kv k="Route" mono>
             {scenario.route.length} waypoints · seed {scenario.seed} · scenario v{scenario.version}
           </Kv>
+          {scenario.platform.visualAsset ? (
+            <Kv k="Robot visual">
+              {scenario.platform.visualAsset.source} asset{" "}
+              <span className="bs-mono">{shortSha(scenario.platform.visualAsset.sha256)}</span> · decorative only;
+              the physical envelope is the platform geometry above
+            </Kv>
+          ) : null}
         </dl>
         <ul className="bs-report-limitations">
           {scenario.assumptions.map((assumption) => (

@@ -250,6 +250,18 @@ export const fixtureScenario: Scenario = {
     brakingDecelerationMps2: 1.5,
     controlLatencyS: 0.2,
     clearanceMarginM: 0.3,
+    // The one REAL asset reference in this fixture set: an actual Mint MCP
+    // generation (see public/mint/PROVENANCE.json). Decorative visual only;
+    // the physical envelope stays radiusM/heightM above.
+    visualAsset: {
+      id: "asset-mint-robot",
+      source: "mint",
+      url: "/mint/teal-stripe-scout-rover.glb",
+      thumbnailUrl: "/mint/teal-stripe-scout-rover-preview.webp",
+      sha256: "85f69933396b670d9b46c8d3cdd61167a106567e3a28b0ff9ad15693ce3bc845",
+      providerTaskId: "ks74ch8bya740cjkcz9zp55adx8dtnmn",
+      createdAt: "2026-09-05T20:08:25.380Z",
+    },
   },
   seed: FIXTURE_SEED,
   authoring: "preset",
