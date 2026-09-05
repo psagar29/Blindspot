@@ -1,0 +1,31 @@
+{
+  "name": "blindspot-local-provider",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --import tsx src/server.ts",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.check.ts",
+    "preflight": "node --import tsx src/cli.ts preflight",
+    "cache:demo": "node --import tsx src/cli.ts cache-demo",
+    "cache:restore": "node --import tsx src/cli.ts restore-demo",
+    "seed:demo": "node --import tsx src/cli.ts seed-demo",
+    "publish:demo": "node --import tsx src/cli.ts publish-demo",
+    "verify:report": "node --import tsx test/verify-report.ts",
+    "deploy:dev": "node --import tsx src/cli.ts deploy-dev",
+    "test:backend": "vitest run --root ../.. --config convex/vitest.config.ts"
+  },
+  "dependencies": {
+    "convex": "1.45.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "convex-test": "0.0.56",
+    "@edge-runtime/vm": "5.0.0",
+    "vitest": "5.0.0"
+  }
+}
