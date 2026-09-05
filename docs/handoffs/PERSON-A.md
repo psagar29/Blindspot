@@ -1,10 +1,10 @@
 # Person A handoff
 
-Status: FRONTEND COMPLETE on fixtures; Mint generation blocked on account access (details below).
+Status: COMPLETE — frontend on fixtures plus the real Mint MCP robot asset imported with provenance.
 
 - Branch: person-a
 - Baseline / A0 commit used: `713a33d5a46574d0b6bb6eab41847dd2753fecae` (A0 bootstrap: root package.json/lockfile, Vite 8 multi-entry modes, strict TS, scripts). B merges this (plus `1a62bfb`, which restores the baseline .gitignore/.env.example content) for the shared root dependency set.
-- Final tested commit: `3b5ce5c` (code through `cfc5686`; evidence in `3b5ce5c`). Everything below was verified at that head after a clean `npm ci`.
+- Final tested commit: `3058af1` (typecheck, 34/34 tests, build:ui all re-verified at this head; the clean `npm ci` reproduction was verified at `3b5ce5c` with identical dependency state).
 
 ## Exact commands and actual results (run 2026-09-05, macOS, node v22.14.0 / npm 10.9.2)
 
@@ -40,18 +40,19 @@ Preview tour: the floating "Fixture controls (dev preview only)" panel loads eve
 
 ## Real integrations versus fixtures
 
-- Everything visible in the preview is FIXTURE data and is labeled as such (banner, badges, "(fixture)" names, fixture provenance). Nothing claims live provider activity.
-- Mint: NOT integrated yet — see blocker below. The robot visual is not claimed anywhere; `Platform.visualAsset` stays unset in fixtures. No procedural mesh is labeled as Mint.
+- The simulation/session data in the preview is FIXTURE data and is labeled as such (banner, badges, "(fixture)" names, fixture provenance). Nothing claims live provider activity.
+- Mint: REAL and complete. `public/mint/teal-stripe-scout-rover.glb` is an actual Mint MCP generation on the operator's Mint account ("Teal Stripe Scout Rover", asset `ks74ch8bya740cjkcz9zp55adx8dtnmn`, project "Blindspot"). `public/mint/PROVENANCE.json` has the full sanitized record: prompt, IDs, timestamps, sha256 `85f69933…`, byte size 856,760, licensing. Export nuance recorded there: the MCP artifact download API is gated for this (no-subscription) account tier, so the GLB was exported by the account owner from the Mint web viewer; the exported byte size exactly matches the MCP-reported `original_glb` size. The fixture scenario references it as `Platform.visualAsset` (source "mint") — the one real asset in the fixture set, and it is decorative: B's platform geometry remains the physical envelope.
 
 ## Evidence
 
-`docs/evidence/a/` — 01 fresh 1440, 02 completed 1440, 03 stale-queued, 04 metrics with Previous-run badge, 05 sensor drawer 1440, 06 generating, 07 calibrating, 08 error+retry with preserved input, 09 offline, 10 incomplete metrics (percentage withheld), 11 no-WebGL, 12 workspace 1024 collapsed rail, 13/14 controller 390, 15 controller 360 queued (scrollWidth == 360, no overflow), 16 operator offline, 17 expired token, 18–21 report sections, 22 print PDF, 23 report not found, 24 keyboard focus ring, 25 QR sharing with configured origin. One batched fix pass (label casing, hazard-row wrap, metrics pass copy) + one confirmation pass, per ACCEPTANCE.md.
+`docs/evidence/a/` — 01 fresh 1440, 02 completed 1440, 03 stale-queued, 04 metrics with Previous-run badge, 05 sensor drawer 1440, 06 generating, 07 calibrating, 08 error+retry with preserved input, 09 offline, 10 incomplete metrics (percentage withheld), 11 no-WebGL, 12 workspace 1024 collapsed rail, 13/14 controller 390, 15 controller 360 queued (scrollWidth == 360, no overflow), 16 operator offline, 17 expired token, 18–21 report sections, 22 print PDF, 23 report not found, 24 keyboard focus ring, 25 QR sharing with configured origin, 26 Mint robot preview render, 27 workspace with Mint attribution. One batched fix pass (label casing, hazard-row wrap, metrics pass copy) + one confirmation pass, per ACCEPTANCE.md.
 
-## Mint status — blocked on account access (exact requirement)
+## Mint status — COMPLETE
 
-- `https://mcp.mint.gg/mcp` verified live; requires OAuth bearer (`mint:read mint:projects:write mint:generate:start mint:generate:approve`), authorization-code + PKCE, dynamic client registration (verified via `/.well-known/oauth-authorization-server`).
-- I registered a client and drove the consent page headlessly; sign-in offers wallet / Google / email only. Submitting the operator's email was (correctly) stopped by the permission layer — logging into the owner's account is a human decision.
-- To unblock, the operator either (a) runs `claude mcp add --transport http mint https://mcp.mint.gg/mcp` and authenticates via `/mcp` in a Claude Code session, or (b) approves the email sign-in so the agent can finish the flow. After OAuth: generate one compact industrial wheeled inspection robot (low-poly GLB), `wait_for_status`, `get_asset_artifact_manifest`, import to `public/mint/` with sanitized provenance (task id, time, prompt, sha256, licensing), hand B the asset path + visual bounding box. UI needs no changes for this; it is an asset + provenance drop.
+- OAuth done against `https://mcp.mint.gg/mcp` (authorization-code + PKCE + dynamic client registration; the operator authorized in their own browser; tokens stayed in the session scratchpad and are not in the repository).
+- Workflow executed per TECHNICAL-NOTES: `who_am_i`/`get_credits_balance` preflight (pipeline ready, usage credits available) → `create_project` "Blindspot" → `start_model_generation` (auto mode) → `wait_for_status` to final `succeeded` → `optimize_generated_model` (standard). Chat: `https://mint.gg/chat/ph79y29zhzy4xpshaaz12rkdr18dvazp`.
+- Artifact for B: `public/mint/teal-stripe-scout-rover.glb` (glTF 2.0 binary, 1 mesh, sha256 `85f69933396b670d9b46c8d3cdd61167a106567e3a28b0ff9ad15693ce3bc845`). **Visual bounding box (local axes, metres): min [-0.329, -0.276, -0.499], max [0.329, 0.276, 0.499], size 0.658 × 0.553 × 0.998 (x × y × z, Y-up).** Fits the fixture platform (radius 0.35 m, height 0.42 m) with modest scaling; treat the mesh as decorative — the platform radius/height in the scenario remain the physical envelope.
+- Known limitation recorded in PROVENANCE.json: MCP artifact download API is gated for this account tier, so the GLB was exported from the Mint web viewer by the account owner (byte-size match confirms it is the same artifact).
 
 ## Contract changes
 
@@ -63,7 +64,6 @@ Pinned exact: react/react-dom 19.2.8, three 0.185.1 (+@types 0.185.4; satisfies 
 
 ## Known limitations
 
-- Mint asset pending the account access above (only remaining P0 item for A).
 - The dev preview's viewport is a labeled schematic; B's `BlindspotViewport` is the real evidence area. `webglSupported()` in `ViewportShell` is a UI-side presentation probe only.
 - Fixture "site photo" is a watermarked SVG, not a real photograph; the live world's `sourcePhotoUrl` comes from B.
 - Reduced-motion and contrast were implemented per tokens and spot-checked, not audited with tooling.
