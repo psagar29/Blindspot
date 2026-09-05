@@ -1,0 +1,40 @@
+{
+  "provider": "Mint (mint.gg) via Mint MCP",
+  "assetName": "Teal Stripe Scout Rover",
+  "role": "Decorative robot body visual. Person B's explicit geometry defines the physical robot envelope; this mesh does not.",
+  "mint": {
+    "assetType": "model",
+    "assetId": "ks74ch8bya740cjkcz9zp55adx8dtnmn",
+    "projectId": "zd76afd0msspz1bx08g4t96rd18dt59c",
+    "projectName": "Blindspot",
+    "chatId": "ph79y29zhzy4xpshaaz12rkdr18dvazp",
+    "chatUrl": "https://mint.gg/chat/ph79y29zhzy4xpshaaz12rkdr18dvazp",
+    "previewStrategy": "text_to_model_preview",
+    "workflow": [
+      "start_model_generation (mode auto, 2026-09-05, authenticated Mint MCP OAuth session)",
+      "wait_for_status until final: succeeded at 2026-09-05T20:08:25.380Z",
+      "optimize_generated_model (standard preset) run afterward; derivative retained on Mint",
+      "GLB exported from the Mint web viewer by the account owner (MCP artifact download API is gated for this account tier; exported bytes match the MCP-reported original_glb byteSize of 856760)"
+    ],
+    "finalStatusAt": "2026-09-05T20:08:25.380Z"
+  },
+  "prompt": "Compact industrial wheeled inspection robot, low-poly game-ready 3D model. A small ground rover: flat rectangular chassis with slightly rounded corners, four small rugged wheels partially recessed into the body, a short front sensor mast with a compact stereo camera housing (two small lenses), one small amber warning beacon on the rear corner. Clean utilitarian proportions, understated matte materials: warm dark gray body panels, soft graphite accents, subtle teal accent stripe along the side. No text, no logos, no humanoid features, no weapons. Single cohesive object on flat ground, neutral studio lighting.",
+  "files": {
+    "teal-stripe-scout-rover.glb": {
+      "sha256": "85f69933396b670d9b46c8d3cdd61167a106567e3a28b0ff9ad15693ce3bc845",
+      "byteSize": 856760,
+      "format": "model/gltf-binary (glTF 2.0)",
+      "boundingBoxM": {
+        "min": [-0.3291, -0.2764, -0.499],
+        "max": [0.3291, 0.2764, 0.499],
+        "size": [0.6582, 0.5527, 0.998]
+      }
+    },
+    "teal-stripe-scout-rover-preview.webp": {
+      "sha256": "36df607ab5e8af64620c933bcf5012e7d02d1d990094633458dd019f40b39850",
+      "source": "Mint CDN preview image for the same asset"
+    }
+  },
+  "licensing": "Generated on the team member's own Mint account for this hackathon project; used here as user-generated content under Mint's terms. Not certified for physical dimensions.",
+  "sanitization": "No OAuth tokens, credential-bearing URLs, or account emails are stored in this file or anywhere in the repository."
+}

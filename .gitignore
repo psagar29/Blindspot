@@ -19,3 +19,6 @@ outputs/
 playwright-report/
 test-results/
 scripts/header-animation/.frames/
+*.tsbuildinfo
+Thumbs.db
+.agent-work/

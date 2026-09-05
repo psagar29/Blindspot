@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Fixture sample site photo: warehouse intake bay with low suspended cable">
+  <defs>
+    <linearGradient id="ceil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3d4650"/>
+      <stop offset="1" stop-color="#565f68"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7a838b"/>
+      <stop offset="1" stop-color="#4b545c"/>
+    </linearGradient>
+    <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#333b44"/>
+      <stop offset="1" stop-color="#4d565f"/>
+    </linearGradient>
+    <linearGradient id="wallR" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#2e363f"/>
+      <stop offset="1" stop-color="#49525b"/>
+    </linearGradient>
+    <linearGradient id="door" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9d4d9"/>
+      <stop offset="1" stop-color="#8fa3ab"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ceiling / walls / floor -->
+  <rect width="800" height="600" fill="url(#ceil)"/>
+  <polygon points="0,0 260,180 260,420 0,600" fill="url(#wallL)"/>
+  <polygon points="800,0 540,180 540,420 800,600" fill="url(#wallR)"/>
+  <polygon points="0,600 260,420 540,420 800,600" fill="url(#floor)"/>
+  <rect x="260" y="180" width="280" height="240" fill="#39424b"/>
+
+  <!-- end doorway -->
+  <rect x="352" y="252" width="96" height="168" fill="url(#door)"/>
+  <rect x="352" y="252" width="96" height="168" fill="none" stroke="#20272e" stroke-width="4"/>
+  <line x1="400" y1="252" x2="400" y2="420" stroke="#20272e" stroke-width="2"/>
+
+  <!-- floor guide lines -->
+  <line x1="120" y1="600" x2="322" y2="420" stroke="#38414a" stroke-width="4"/>
+  <line x1="680" y1="600" x2="478" y2="420" stroke="#38414a" stroke-width="4"/>
+  <line x1="330" y1="600" x2="378" y2="420" stroke="#8b959d" stroke-width="3" stroke-dasharray="16 12"/>
+  <line x1="470" y1="600" x2="422" y2="420" stroke="#8b959d" stroke-width="3" stroke-dasharray="16 12"/>
+
+  <!-- left racks -->
+  <g fill="#242c34" stroke="#1a2129" stroke-width="2">
+    <rect x="36" y="150" width="150" height="330"/>
+    <rect x="196" y="230" width="70" height="220"/>
+  </g>
+  <g fill="#5c666f">
+    <rect x="48" y="180" width="126" height="52"/>
+    <rect x="48" y="260" width="126" height="52"/>
+    <rect x="48" y="340" width="126" height="52"/>
+    <rect x="204" y="256" width="54" height="38"/>
+    <rect x="204" y="320" width="54" height="38"/>
+  </g>
+
+  <!-- right rack + drum -->
+  <g fill="#242c34" stroke="#1a2129" stroke-width="2">
+    <rect x="620" y="140" width="150" height="340"/>
+    <rect x="544" y="240" width="66" height="210"/>
+  </g>
+  <g fill="#5c666f">
+    <rect x="632" y="176" width="126" height="56"/>
+    <rect x="632" y="262" width="126" height="56"/>
+    <rect x="632" y="348" width="126" height="56"/>
+  </g>
+  <ellipse cx="590" cy="486" rx="46" ry="14" fill="#20272e"/>
+  <rect x="544" y="430" width="92" height="56" rx="6" fill="#31505a"/>
+  <ellipse cx="590" cy="430" rx="46" ry="14" fill="#3d616c"/>
+
+  <!-- pallet stack near route -->
+  <g>
+    <rect x="292" y="470" width="118" height="26" fill="#6b5a3e"/>
+    <rect x="298" y="420" width="106" height="52" fill="#8d99a2" stroke="#4b545c" stroke-width="2"/>
+    <rect x="304" y="378" width="94" height="44" fill="#9aa6af" stroke="#4b545c" stroke-width="2"/>
+    <line x1="298" y1="446" x2="404" y2="446" stroke="#c3ccd2" stroke-width="3" opacity="0.5"/>
+  </g>
+
+  <!-- sagging power cable across the bay (low) -->
+  <path d="M 118 340 C 300 442, 520 438, 700 320" fill="none" stroke="#14181d" stroke-width="7" stroke-linecap="round"/>
+  <path d="M 118 340 C 300 442, 520 438, 700 320" fill="none" stroke="#3d4750" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- thin comms line, harder to see -->
+  <path d="M 210 300 C 360 372, 520 368, 664 292" fill="none" stroke="#1c2228" stroke-width="2.5" opacity="0.85"/>
+
+  <!-- overhead lights -->
+  <g fill="#e9eef1" opacity="0.9">
+    <rect x="300" y="96" width="60" height="10" rx="4"/>
+    <rect x="440" y="96" width="60" height="10" rx="4"/>
+    <rect x="368" y="150" width="64" height="9" rx="4"/>
+  </g>
+
+  <!-- fixture watermark -->
+  <g>
+    <rect x="16" y="548" width="330" height="36" rx="8" fill="#111820" opacity="0.85"/>
+    <text x="32" y="572" font-family="Menlo, Consolas, monospace" font-size="17" fill="#efe7d2" letter-spacing="1">FIXTURE SAMPLE - NOT A SITE PHOTO</text>
+  </g>
+</svg>
