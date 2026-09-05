@@ -52,8 +52,8 @@ Blindspot is implemented as a release candidate: the React operator console, Thr
 
 | Artifact | State |
 | --- | --- |
-| Public app | [blindspot-site-review.briny-comet-2324.chatgpt.site](https://blindspot-site-review.briny-comet-2324.chatgpt.site) |
-| Example immutable report | [Higher-resolution run, config v3](https://blindspot-site-review.briny-comet-2324.chatgpt.site/reports/5ef08b92-cab3-45d1-a4fd-5b53c9dcaf3f) |
+| Public app | [blindspot-site-review.sagarpranav000.chatgpt.site](https://blindspot-site-review.sagarpranav000.chatgpt.site) |
+| Example immutable report | [Higher-resolution run, config v3](https://blindspot-site-review.sagarpranav000.chatgpt.site/reports/5ef08b92-cab3-45d1-a4fd-5b53c9dcaf3f) |
 | Frontend and operator runtime | Complete; authoring remains local-only by design |
 | Engine and Convex backend | Complete; deterministic tests and a live two-browser run pass |
 | World Labs Marble | Real cached generated world, collider, preview, and durable report assets verified |
@@ -276,9 +276,9 @@ The current account has no Tripo generation credits, so the reproducible release
 npm --prefix services/provider run deploy:dev
 
 # Seed or refresh the cached demo, then keep the provider running
-VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.briny-comet-2324.chatgpt.site \
+VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
   npm --prefix services/provider run seed:demo -- --development-proxy
-VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.briny-comet-2324.chatgpt.site \
+VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
   npm --prefix services/provider run dev
 ```
 
@@ -287,7 +287,7 @@ In a second terminal:
 ```bash
 VITE_AUTHORING_ENABLED=true \
 VITE_CONVEX_URL=https://standing-pony-711.convex.cloud \
-VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.briny-comet-2324.chatgpt.site \
+VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
   npm run dev
 ```
 
@@ -298,7 +298,7 @@ Open `http://localhost:5173`. Authoring and simulation remain on this operator l
 ```bash
 VITE_AUTHORING_ENABLED=false \
 VITE_CONVEX_URL=https://standing-pony-711.convex.cloud \
-VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.briny-comet-2324.chatgpt.site \
+VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
   npm run build
 ```
 

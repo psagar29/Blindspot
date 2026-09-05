@@ -30,9 +30,9 @@ npm --prefix services/provider run cache:restore
 export BLINDSPOT_ENV_FILE=/absolute/private/path/Blindspot.env
 npm --prefix services/provider run preflight
 npm --prefix services/provider run deploy:dev
-VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.briny-comet-2324.chatgpt.site \
+VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
   npm --prefix services/provider run seed:demo -- --development-proxy
-VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.briny-comet-2324.chatgpt.site \
+VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
   npm --prefix services/provider run dev
 ```
 
@@ -41,7 +41,7 @@ Second terminal:
 ```bash
 VITE_AUTHORING_ENABLED=true \
 VITE_CONVEX_URL=https://standing-pony-711.convex.cloud \
-VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.briny-comet-2324.chatgpt.site \
+VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
   npm run dev
 ```
 
@@ -50,7 +50,7 @@ Public build:
 ```bash
 VITE_AUTHORING_ENABLED=false \
 VITE_CONVEX_URL=https://standing-pony-711.convex.cloud \
-VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.briny-comet-2324.chatgpt.site \
+VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
   npm run build
 ```
 
@@ -69,8 +69,8 @@ VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.briny-comet-2324.chatgpt.si
 
 ## Public artifacts and evidence
 
-- App: `https://blindspot-site-review.briny-comet-2324.chatgpt.site`
-- Example report: `https://blindspot-site-review.briny-comet-2324.chatgpt.site/reports/5ef08b92-cab3-45d1-a4fd-5b53c9dcaf3f`
+- App: `https://blindspot-site-review.sagarpranav000.chatgpt.site`
+- Example report: `https://blindspot-site-review.sagarpranav000.chatgpt.site/reports/5ef08b92-cab3-45d1-a4fd-5b53c9dcaf3f`
 - Release record: `docs/evidence/c/RELEASE-VERIFICATION.md`
 - UI/Mint evidence: `docs/evidence/a/`
 - Engine/backend/Marble evidence: `docs/evidence/b/`
