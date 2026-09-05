@@ -1,0 +1,24 @@
+{
+  "reportId": "2befc0cd-7508-47f2-9e07-641a2bfc0478",
+  "runId": "jh751ksk7cjsthc9v8kqt4s2g98dtr9q",
+  "scenarioVersion": 2,
+  "configVersion": 3,
+  "status": "blind_spot_observed",
+  "coverage": 66.66666666666666,
+  "outcome": "collision",
+  "snapshotSha256": "9d91af1f106f9c028c05fbec2262c24f892f2445d61bb3b15694184d1465e6b2",
+  "verifiedAssets": [
+    {
+      "id": "2142b8cacb96798aa6ca376f165b97669bb854659a462d835e2a084c511bcbd4.spz",
+      "bytes": 1276862,
+      "sha256": "2142b8cacb96798aa6ca376f165b97669bb854659a462d835e2a084c511bcbd4"
+    },
+    {
+      "id": "8a39154e3a952f7e35a87e0bd29da1ca723bbf373c5b70ca2128761bbc69a4be.glb",
+      "bytes": 2194696,
+      "sha256": "8a39154e3a952f7e35a87e0bd29da1ca723bbf373c5b70ca2128761bbc69a4be"
+    }
+  ],
+  "sourcePreviewStatus": 200,
+  "authenticated": false
+}
