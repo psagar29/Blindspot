@@ -1,3 +1,17 @@
+<p align="center">
+  <img src="docs/media/blindspot-header.gif" width="960"
+       alt="Two synchronized viewports. Left, ground truth: a robot drives a warehouse aisle toward an 8 mm cable at 0.35 m, annotated in rust. Right, modeled perception at the declared 160x120 raster: the cable returns nothing until 0.68 m, inside the 1.11 m the robot needs to stop. The run ends in contact, labelled BLIND SPOT.">
+</p>
+
+<p align="center"><sub>
+Rendered by <a href="scripts/header-animation/render.mjs"><code>scripts/header-animation</code></a> from
+World Labs Marble world <code>3acfff63</code> (<code>marble-1.1</code>, text prompt): its collider mesh is
+the ground truth, the 8&nbsp;mm cable is procedural. The right panel is an actual depth pass at the declared
+160&times;120 raster back-projected with <code>fx&nbsp;=&nbsp;98.79&nbsp;px</code>, not an illustration &mdash; the
+cable fails the sub-pixel test until 0.68&nbsp;m, inside the 1.11&nbsp;m stopping corridor. No Tripo or Mint
+asset appears in this render; see <a href="#sponsor-implementation">Sponsor implementation</a>.
+</sub></p>
+
 # Blindspot
 
 **A site photograph becomes a navigable world where we expose what a robot cannot see.**

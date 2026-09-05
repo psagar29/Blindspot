@@ -1,0 +1,277 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Blindspot header</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#E8ECEF; --ink:#202A32; --ink2:#4D5B66; --border:#AAB4BD;
+    --view:#111820; --label:#EEF3F6; --teal:#006B78; --rust:#A33422;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{width:960px;height:431px;background:var(--canvas);
+    font-family:Manrope,system-ui,sans-serif;color:var(--ink);overflow:hidden}
+  #shell{position:relative;width:960px;height:431px;padding:12px}
+  #frame{position:relative;width:936px;height:351px;border-radius:24px;overflow:hidden;
+    background:var(--view);border:1px solid var(--border)}
+  canvas{position:absolute;inset:0;width:936px;height:351px}
+  #plate{position:absolute;inset:0;background-size:cover;background-position:center}
+  #plate::after{content:"";position:absolute;inset:0;background:linear-gradient(#11182022,#111820dd)}
+  .lbl{position:absolute;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;
+    letter-spacing:.04em;color:var(--label);background:#111820cc;padding:3px 6px;border-radius:6px}
+  #lT{left:10px;top:10px} #lP{left:478px;top:10px}
+  #split{position:absolute;left:468px;top:0;width:1px;height:351px;background:#EEF3F633}
+  #range{position:absolute;left:482px;bottom:12px;font-family:"IBM Plex Mono",monospace;
+    font-size:12px;color:var(--label);background:#111820cc;padding:3px 6px;border-radius:6px}
+  #verdict{position:absolute;left:14px;bottom:12px;font-family:"IBM Plex Mono",monospace;
+    font-size:12px;color:#F2B8AC;background:#2a0f0acc;padding:3px 6px;border-radius:6px;opacity:0}
+  #title{position:absolute;left:0;right:0;top:132px;text-align:center;color:var(--label);
+    text-shadow:0 2px 14px #000;pointer-events:none}
+  #title b{display:block;font-size:36px;letter-spacing:-.01em}
+  #title span{display:block;margin-top:10px;font-family:"IBM Plex Mono",monospace;font-size:12px;
+    letter-spacing:.06em;color:#C6D2DA}
+  #hud{display:flex;align-items:center;gap:22px;height:56px;padding:0 12px;margin-top:8px}
+  .stat{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink2);white-space:nowrap;
+    letter-spacing:.04em}
+  .stat b{display:block;font-size:15px;color:var(--ink);font-weight:500;margin-top:4px;
+    font-variant-numeric:tabular-nums}
+  .stat.bad b{color:var(--rust)}
+  #chip{position:absolute;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.04em;
+    color:#F2B8AC;background:#111820cc;border:1px solid #A3342288;border-radius:6px;padding:3px 6px;
+    white-space:nowrap;opacity:0;transform:translate(-50%,-160%)}
+  #hud .sp{flex:1}
+  #claim{font-size:11px;color:var(--ink2);max-width:280px;line-height:1.4;text-align:right}
+</style>
+<div id="shell">
+  <div id="frame">
+    <canvas id="c"></canvas>
+    <div id="plate"></div>
+    <div id="split"></div>
+    <div class="lbl" id="lT">GROUND TRUTH</div>
+    <div class="lbl" id="lP">MODELED PERCEPTION &middot; 160&times;120</div>
+    <div id="range"></div>
+    <div id="verdict"></div>
+    <div id="chip">&empty;8 mm CABLE &middot; ANNOTATED, NOT TO VISUAL SCALE</div>
+    <div id="title"><b>Blindspot</b><span></span></div>
+  </div>
+  <div id="hud">
+    <div class="stat">HAZARD<b id="hz">cable &empty;8 mm</b></div>
+    <div class="stat">REQUIRED STOP<b id="rs">&mdash; m</b></div>
+    <div class="stat" id="fdBox">FIRST DETECTION<b id="fd">&mdash; m</b></div>
+    <div class="stat" id="cvBox">HAZARD COVERAGE<b id="cv">not evaluated</b></div>
+    <div class="sp"></div>
+    <div id="claim">Modeled blind spots under stated assumptions. Not a safety certification.</div>
+  </div>
+</div>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+
+const W=936,H=351,VW=468;   // 468x351 = 4:3, same aspect as the sensor raster            // frame, per-viewport width
+const SW=160,SH=120;                 // the declared sensor raster, not a display size
+const HFOV=78*Math.PI/180;
+const FX=SW/(2*Math.tan(HFOV/2));    // focal length in SENSOR pixels
+const FY=FX, CX=SW/2, CY=SH/2, FAR=14;
+const DIA=0.008, MINPX=1.0;
+const SPEED=1.2, LAT=0.15, DECEL=1.5, OVERHANG=0.30, CLEAR=0.15;
+const D_CRIT=FX*DIA/MINPX;                                // range at which the cable spans 1 px
+// every distance below is axial, from the sensor plane, so nothing is counted twice
+const D_STOP=SPEED*LAT + SPEED*SPEED/(2*DECEL) + OVERHANG + CLEAR;
+const CABLE_Z=-5.2, START_Z=1.0, SENSOR_H=0.45, CABLE_H=0.35;
+
+const world = await fetch('./world.json').then(r=>r.json()).catch(()=>({}));
+document.querySelector('#title span').textContent=(world.label||'MARBLE WORLD').toUpperCase();
+if(world.plate) document.getElementById('plate').style.backgroundImage='url('+world.plate+')';
+
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+renderer.setPixelRatio(2); renderer.setSize(W,H,false);
+
+// --- truth scene: the only geometry physics and the sensor pass may touch ---
+const truth=new THREE.Scene();
+truth.background=new THREE.Color(0x111820);
+truth.fog=new THREE.Fog(0x111820,4,13);
+truth.add(new THREE.HemisphereLight(0x9fb4c4,0x0a0f14,1.6));
+const key=new THREE.DirectionalLight(0xffffff,1.7); key.position.set(2,6,2); truth.add(key);
+
+const ID_SITE=1, ID_CABLE=2;
+const mark=(o,id)=>o.traverse(n=>{if(n.isMesh)n.userData.id=id});
+
+if(world.collider){
+  // Documented axis correction (180 deg about X), then the aisle turned down -Z.
+  // The floor height is measured by raycast along the route rather than assumed:
+  // a pano-derived collider floor is not flat and its bbox minimum is not the ground.
+  const g=await new GLTFLoader().loadAsync(world.collider);
+  const m=g.scene;
+  m.traverse(n=>{if(n.isMesh)n.material=new THREE.MeshStandardMaterial(
+    {color:0x3a4a56,roughness:.95,metalness:0,side:THREE.DoubleSide});});
+  m.rotation.x=Math.PI;
+  const site=new THREE.Group(); site.rotation.y=Math.PI/2; site.add(m);
+  truth.add(site); site.updateMatrixWorld(true);
+
+  const ray=new THREE.Raycaster(), down=new THREE.Vector3(0,-1,0), hits=[];
+  for(let z=START_Z; z>=CABLE_Z-1; z-=0.4){
+    ray.set(new THREE.Vector3(0,12,z),down);
+    const hs=ray.intersectObject(site,true);      // ceiling first, floor last
+    if(hs.length) hits.push(hs[hs.length-1].point.y);
+  }
+  hits.sort((a,b)=>a-b);
+  site.position.y = hits.length ? -hits[Math.floor(hits.length/2)] : 0;
+  site.updateMatrixWorld(true);
+  window.floorSamples=hits.length;
+  mark(site,ID_SITE);
+}else{
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(14,28),
+    new THREE.MeshStandardMaterial({color:0x2b3a45,roughness:1}));
+  floor.rotation.x=-Math.PI/2; mark(floor,ID_SITE); truth.add(floor);
+}
+
+// procedural hazard: exact endpoints and exact diameter, never a generated approximation
+const cable=new THREE.Mesh(new THREE.CylinderGeometry(DIA/2,DIA/2,3.2,10),
+  new THREE.MeshStandardMaterial({color:0xA33422,roughness:.65,emissive:0x39100a}));
+cable.rotation.z=Math.PI/2; cable.position.set(0,CABLE_H,CABLE_Z);
+mark(cable,ID_CABLE); truth.add(cable);
+for(const x of [-1.6,1.6]){
+  const p=new THREE.Mesh(new THREE.CylinderGeometry(.022,.022,.35,8),
+    new THREE.MeshStandardMaterial({color:0x6b7681,roughness:.9}));
+  p.position.set(x,CABLE_H/2,CABLE_Z); mark(p,ID_SITE); truth.add(p);
+}
+// annotations: drawn in the truth viewport, excluded from the sensor pass (no userData.id)
+const grid=new THREE.GridHelper(28,56,0x25333D,0x25333D);
+grid.material.transparent=true; grid.material.opacity=.5; grid.position.y=0.004; truth.add(grid);
+const proxy=new THREE.Mesh(new THREE.CylinderGeometry(1,1,3.2,10),
+  new THREE.MeshBasicMaterial({color:0xC4472F}));
+proxy.rotation.z=Math.PI/2; proxy.position.copy(cable.position); truth.add(proxy);
+const FX_VIEW=VW/(2*Math.tan(HFOV/2));   // display pixels, not sensor pixels
+// hold the annotation at a constant ~4 px so it never reads as a thicker cable
+const sizeProxy=range=>{const r=2*range/FX_VIEW; proxy.scale.set(r,1,r);};
+
+const chassis=new THREE.Mesh(new THREE.BoxGeometry(.62,.16,.30),
+  new THREE.MeshStandardMaterial({color:0x1b242c,roughness:.85}));
+truth.add(chassis);   // self: excluded from the sensor pass
+
+const cam=new THREE.PerspectiveCamera(
+  2*Math.atan(Math.tan(HFOV/2)*SH/SW)*180/Math.PI, VW/H, 0.05, FAR);
+
+// --- perception scene: nothing but what the sensor pass actually returned ---
+const per=new THREE.Scene(); per.background=new THREE.Color(0x0d141b);
+const MAXP=SW*SH;
+const pg=new THREE.BufferGeometry();
+pg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(MAXP*3),3));
+pg.setAttribute('color',new THREE.BufferAttribute(new Float32Array(MAXP*3),3));
+per.add(new THREE.Points(pg,new THREE.PointsMaterial({size:2.4,sizeAttenuation:false,vertexColors:true})));
+
+const depthMat=new THREE.ShaderMaterial({
+  uniforms:{uFar:{value:FAR}},
+  vertexShader:'varying float vZ; void main(){vec4 mv=modelViewMatrix*vec4(position,1.);'+
+    'vZ=-mv.z; gl_Position=projectionMatrix*mv;}',
+  fragmentShader:'uniform float uFar; varying float vZ; void main(){'+
+    'float v=clamp(vZ/uFar,0.,1.); float hi=floor(v*255.)/255., lo=fract(v*255.);'+
+    'gl_FragColor=vec4(hi,lo,0.,1.);}'});
+const rt=new THREE.WebGLRenderTarget(SW,SH,{type:THREE.UnsignedByteType});
+const buf=new Uint8Array(SW*SH*4);
+let rng=1; const rand=()=>(rng=(rng*1103515245+12345)&0x7fffffff)/0x7fffffff;
+const tmp=new THREE.Vector3();
+
+// One opaque depth pass per id group: depth and object id without touching materials.
+function sense(){
+  rng=1;              // same seed every frame: a stable sample pattern, not TV static
+  chassis.visible=false;
+  truth.overrideMaterial=depthMat;
+  const pos=pg.attributes.position.array, col=pg.attributes.color.array;
+  let n=0, firstCable=Infinity;
+  for(const id of [ID_SITE,ID_CABLE]){
+    truth.traverse(o=>{if(o.isMesh)o.visible=(o.userData.id===id)});
+    renderer.setRenderTarget(rt);
+    renderer.setClearColor(0x000000,0); renderer.clear();
+    renderer.render(truth,cam);
+    renderer.readRenderTargetPixels(rt,0,0,SW,SH,buf);
+    for(let i=0;i<SW*SH;i++){
+      if(!buf[i*4+3]) continue;
+      const z=((buf[i*4]+buf[i*4+1]/255)/255)*FAR;
+      if(z<=0.06||z>=FAR-0.02) continue;
+      const u=i%SW, v=Math.floor(i/SW);               // readRenderTargetPixels is bottom-up
+      tmp.set((u-CX)/FX*z,(v-CY)/FY*z,-z).applyMatrix4(cam.matrixWorld);
+      if(tmp.y<0.06) continue;                        // floor mask
+      if(id===ID_CABLE){
+        // sub-pixel test: a rasterised fragment is not a match. Passive stereo needs
+        // the projected width to reach minPixels, i.e. z <= fx*diameter/minPixels.
+        if(FX*DIA/z < MINPX) continue;
+        firstCable=Math.min(firstCable,z);
+      }
+      else if((u&1)||(v&1)) continue;                 // degraded cloud, not a dense scan
+      const j=Math.max(0,(z-1.5))*0.004;              // range-dependent noise
+      pos[n*3]=tmp.x+(rand()-.5)*j;
+      pos[n*3+1]=tmp.y+(rand()-.5)*j;
+      pos[n*3+2]=tmp.z+(rand()-.5)*j;
+      const t=Math.max(.18,1-z/FAR*1.4);
+      if(id===ID_CABLE){ col[n*3]=1; col[n*3+1]=.34; col[n*3+2]=.22; }
+      else { col[n*3]=.55*t; col[n*3+1]=.80*t; col[n*3+2]=.88*t; }
+      if(++n>=MAXP) break;
+    }
+  }
+  truth.overrideMaterial=null;
+  truth.traverse(o=>{if(o.isMesh)o.visible=true});
+  chassis.visible=true;
+  pg.setDrawRange(0,n);
+  pg.attributes.position.needsUpdate=pg.attributes.color.needsUpdate=true;
+  return firstCable;
+}
+
+const $=id=>document.getElementById(id);
+$('rs').textContent=D_STOP.toFixed(2)+' m';
+let detected=null, impact=false;
+
+window.renderFrame=(t)=>{
+  const plateA=t<1.6?1:Math.max(0,1-(t-1.6)/0.8);
+  $('plate').style.opacity=plateA;
+  $('title').style.opacity=t<1.6?1:Math.max(0,1-(t-1.6)/0.5);
+
+  const run=Math.max(0,t-2.0);
+  // the run stops at contact: the platform front reaches the cable at range = OVERHANG
+  const z=Math.max(CABLE_Z+OVERHANG, Math.min(START_Z-SPEED*run,START_Z));
+  const range=z-CABLE_Z;                          // sensor plane to hazard, axial
+  cam.position.set(0,SENSOR_H,z); cam.lookAt(0,SENSOR_H,z-3); cam.updateMatrixWorld();
+  chassis.position.set(0,SENSOR_H-0.14,z-OVERHANG+0.15);
+
+  const first=sense();
+  if(detected===null && isFinite(first)) detected=range;
+  if(range<=OVERHANG+1e-6) impact=true;
+
+  renderer.setRenderTarget(null);
+  renderer.setScissorTest(true); renderer.setClearColor(0x111820,1);
+  // three.js applies the pixel ratio itself: these are CSS units, not device pixels
+  renderer.setViewport(0,0,VW,H); renderer.setScissor(0,0,VW,H);
+  renderer.render(truth,cam);
+  renderer.setViewport(VW,0,VW,H); renderer.setScissor(VW,0,VW,H);
+  renderer.render(per,cam);
+  renderer.setScissorTest(false);
+
+  sizeProxy(range);
+  const cp=cable.position.clone().project(cam);
+  const onScreen = t>2.3 && cp.z<1 && Math.abs(cp.x)<1;
+  $('chip').style.opacity = onScreen?1:0;
+  $('chip').style.left=((cp.x*.5+.5)*VW)+'px';
+  $('chip').style.top=((1-(cp.y*.5+.5))*H)+'px';
+
+  $('range').textContent = t<2.0 ? ''
+    : 'RANGE ' + range.toFixed(2) + ' m · ' + (detected===null?'NO HAZARD RETURN':'HAZARD RETURN');
+  if(detected!==null){
+    $('fd').textContent=detected.toFixed(2)+' m';
+    $('fdBox').className='stat bad';
+    $('cv').textContent='0 / 1 in time';
+    $('cvBox').className='stat bad';
+  }
+  if(impact){
+    $('verdict').style.opacity=1;
+    $('verdict').textContent='BLIND SPOT · CONTACT AT '+SPEED.toFixed(1)+' m/s · SEEN AT '+
+      (detected===null?'—':detected.toFixed(2))+' m, NEEDED '+D_STOP.toFixed(2)+' m';
+    $('lT').style.color='#F2B8AC';
+  }
+  return {range,detected,dStop:D_STOP,dCrit:D_CRIT,fx:FX};
+};
+window.ready=true;
+</script>

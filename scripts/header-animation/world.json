@@ -1,0 +1,12 @@
+{
+  "label": "world 3acfff63 \u00b7 marble-1.1",
+  "collider": "world/collider.glb",
+  "plate": "world/thumbnail.webp",
+  "world_id": "3acfff63-c8e5-4ac8-825f-00786f7d2209",
+  "operation_id": "6d7ae021-0219-4d56-afe0-c56a9684b06d",
+  "model": "marble-1.1",
+  "prompt_type": "text",
+  "metric_scale_factor": 1.5632882,
+  "ground_plane_offset": 0.9092109,
+  "note": "Collider GLB is already metric; the SPZ metric_scale_factor is recorded, not applied to it. Axis correction is the documented 180 deg about X; the floor height is measured by raycast along the route, not assumed. This is a header-render preview transform, not the verified run calibration."
+}
