@@ -51,7 +51,9 @@ function RunControls({ state, actions }: RuntimeBridge) {
         </Badge>
       ) : null}
       {!state.capabilities.run ? (
-        <span className="bs-meta">Runs execute on the operator workstation.</span>
+        <span className="bs-meta">
+          {state.mode === "recording" && state.scenario ? "Loading the 3D scene for browser replay…" : "Runs execute on the operator workstation."}
+        </span>
       ) : null}
       {error ? (
         <span className="bs-meta" role="alert" style={{ color: "var(--bs-rust)" }}>

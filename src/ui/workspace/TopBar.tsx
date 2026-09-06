@@ -29,7 +29,7 @@ export function TopBar(
         Blind<em>spot</em>
       </span>
       <span className="bs-topbar-site" title={state.session?.siteName}>
-        {state.session ? state.session.siteName : "No session"}
+        {state.session ? state.session.siteName : state.mode === "recording" && state.world ? state.world.name : "No session"}
       </span>
       <span className="bs-topbar-mode">
         <ModeBadge mode={state.mode} />

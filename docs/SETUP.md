@@ -33,7 +33,7 @@ Preflight returns only `configured`, `reachable`, `authorized`, `missing`, or a 
 
 Use a local integration branch only. After A/B handoffs, `npm ci` at root and in `services/provider/` must reproduce dependencies. B's README/scripts must state the exact laptop startup commands and ports. Launch local provider service, then local operator app; verify browser requests go through its same-origin proxy. Open public controller/report pages separately.
 
-The public origin is `https://blindspot-site-review.sagarpranav000.chatgpt.site`. Deploy static output with SPA fallback for controller/report URLs; configure only `VITE_CONVEX_URL`, `VITE_PUBLIC_APP_ORIGIN`, and `VITE_AUTHORING_ENABLED=false`. A correct deploy serves deep links on direct navigation, not only after clicking from `/`. Public reports resolve durable storage URLs without localhost. Keep all deployment credentials local to the deployment tool; do not place them in cloud build settings under this owner's local-only requirement.
+The public origin is `https://blindspot-site-review.sagarpranav000.chatgpt.site`. Deploy static output with SPA fallback for controller/report URLs; configure only `VITE_CONVEX_URL`, `VITE_PUBLIC_APP_ORIGIN`, `VITE_DEMO_REPORT_ID`, and `VITE_AUTHORING_ENABLED=false`. The root preloads that immutable report as the credential-free judge demo; authoring and publishing remain local-only. A correct deploy serves deep links on direct navigation, not only after clicking from `/`. Public reports resolve durable storage URLs without localhost. Keep all deployment credentials local to the deployment tool; do not place them in cloud build settings under this owner's local-only requirement.
 
 ## Current access-dependent limits
 

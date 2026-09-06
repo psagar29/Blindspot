@@ -33,7 +33,7 @@ export function ConnectionBadge({ connection }: { connection: AppState["connecti
 const MODE_LABEL: Record<AppState["mode"], string> = {
   fixture: "Fixture data",
   live: "Live session",
-  recording: "Recorded playback",
+  recording: "Judge demo",
 };
 
 export function ModeBadge({ mode }: { mode: AppState["mode"] }) {
@@ -48,7 +48,7 @@ export function ModeBanner({ mode }: { mode: AppState["mode"] }) {
     <div className="bs-mode-banner" role="note">
       {mode === "fixture"
         ? "Fixture data: deterministic sample state for UI development, not a live run."
-        : "Recorded playback: previously captured run, not live simulation."}
+        : "Judge demo: published scenario and durable assets. Replays run in this browser and do not alter the immutable report."}
     </div>
   );
 }

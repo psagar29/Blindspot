@@ -20,7 +20,7 @@ A0 is an early pushed commit, not a giant final dump. B merges A0 to get root de
 
 ## Routes
 
-- `/`: operator workspace. Public deployment with authoring disabled shows read-only session guidance, not an unauthenticated world-generation button.
+- `/`: operator workspace locally. With public authoring disabled, loads the configured immutable report as a judge demo and permits credential-free in-browser replay; it never exposes world generation or report publishing.
 - `/control/:sessionId#token=…`: lightweight preset controller. Fragment token is read once and held privately; don't forward it into report URLs or analytics. Validate server-side; obscurity alone is not authorization.
 - `/reports/:reportId`: public immutable report, no controller/owner credentials, no engine load.
 

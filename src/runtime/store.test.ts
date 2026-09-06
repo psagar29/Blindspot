@@ -2,6 +2,7 @@ import { afterEach, expect, test, vi } from 'vitest';
 import { getFunctionName } from 'convex/server';
 import { RuntimeStore, publicLink, routeFromPath } from './store';
 import type { WorldScene } from '../engine/scene';
+import { buildFixtureReport, fixtureRuns, fixtureScenario, verifiedCalibration } from '../mocks/fixtureData';
 
 const deferred=()=>{let resolve!:(value:any)=>void;const promise=new Promise(resolveFn=>{resolve=resolveFn;});return {promise,resolve};};
 afterEach(()=>vi.restoreAllMocks());
@@ -27,4 +28,13 @@ test('disposing an older React lifecycle cannot close the replacement client',as
   const store=new RuntimeStore(),closing=deferred(),replacement={close:vi.fn(async()=>{})};
   Object.assign(store,{client:{close:()=>closing.promise}});const disposed=store.dispose();Object.assign(store,{client:replacement});closing.resolve(undefined);await disposed;
   expect((store as unknown as {client:unknown}).client).toBe(replacement);expect(replacement.close).not.toHaveBeenCalled();
+});
+test('public workspace preloads an immutable report and enables credential-free replay once the scene is ready',async()=>{
+  const world={...fixtureScenario.world,calibration:verifiedCalibration({referenceLabel:'Demo reference',referenceLengthM:1,evidence:'assumed',correctionFactor:1})};
+  const scenario={...fixtureScenario,world};const report=buildFixtureReport({...fixtureRuns.baseline,scenarioId:scenario.id},scenario);const query=vi.fn(async()=>report);
+  const store=new RuntimeStore();Object.assign(store,{client:{query}});
+  await (store as unknown as {openRoute():Promise<void>}).openRoute();
+  expect(store.state.mode).toBe('recording');expect(store.state.scenario?.id).toBe(scenario.id);expect(store.state.latestRun?.id).toBe(report.run.id);expect(store.state.capabilities.authoring).toBe(false);
+  store.attachScene({registration:{loaded:true}} as unknown as WorldScene);
+  expect(store.state.capabilities.run).toBe(true);expect(query).toHaveBeenCalledTimes(1);
 });

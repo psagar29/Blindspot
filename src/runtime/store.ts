@@ -11,6 +11,8 @@ import { nextSnapshot } from '../engine/versions';
 type Bootstrap={sessionId:string;ownerToken:string;controllerToken:string};
 type LocalSession={localToken:string;bootstrap:Bootstrap|null;world:World|null;bulk:HazardLibraryItem|null};
 const wire=(value:unknown)=>JSON.parse(JSON.stringify(value));
+export const DEFAULT_DEMO_REPORT_ID='c95256fa-abb3-4e16-afab-36c06c7c8869';
+const demoReportId=()=>import.meta.env.VITE_DEMO_REPORT_ID?.trim()||DEFAULT_DEMO_REPORT_ID;
 export function routeFromPath(path:string):RouteState {
   if(path==='/'||path==='/engine.html')return {kind:'workspace'};
   const control=/^\/control\/([a-zA-Z0-9_.:-]{1,128})$/.exec(path);if(control)return {kind:'controller',sessionId:control[1]!};
@@ -24,14 +26,14 @@ export class RuntimeStore {
   state=initial();private listeners=new Set<()=>void>();private client:ConvexClient|null=null;private unsubscribe:(()=>void)|null=null;
   private local:LocalSession|null=null;private scene:WorldScene|null=null;private instanceId=crypto.randomUUID();private controllerToken='';private heartbeat:ReturnType<typeof setInterval>|null=null;
   private busy=false;private leaseExpiresAt=0;private lastOperation:(()=>Promise<void>)|null=null;private lastEvaluation:Evaluation|null=null;private playback:ReturnType<typeof setInterval>|null=null;
-  private disposed=false;private editing=false;private uploads=new Map<string,string>();private lifecycle=0;private routeEpoch=0;
+  private disposed=false;private editing=false;private publicDemo=false;private publicDemoAutostarted=false;private uploads=new Map<string,string>();private lifecycle=0;private routeEpoch=0;
   subscribe=(fn:()=>void)=>{this.listeners.add(fn);return()=>{this.listeners.delete(fn);};};
   snapshot=()=>this.state;
   private patch(update:Partial<AppState>){if(this.disposed)return;this.state={...this.state,...update};this.listeners.forEach(fn=>fn());}
-  private deriveCapabilities(){const local=this.state.route.kind==='workspace'&&!!this.local;
-    this.patch({capabilities:{authoring:local,run:local&&!!this.scene?.registration.loaded&&this.state.world?.calibration.status==='verified'&&!this.busy,
+  private deriveCapabilities(){const local=this.state.route.kind==='workspace'&&!!this.local,demo=this.state.route.kind==='workspace'&&this.publicDemo;
+    this.patch({capabilities:{authoring:local,run:(local||demo)&&!!this.scene?.registration.loaded&&this.state.world?.calibration.status==='verified'&&!this.busy,
       publish:!!this.local?.bootstrap&&!!this.state.latestRun&&this.state.latestRun.config.version===this.state.session?.requestedConfigVersion&&!!publicLink('/'),
-      ...(!local?{authoringReason:'World authoring runs on the connected operator laptop.'}:{})}});}
+      ...(!local?{authoringReason:demo?'Judge demo preloaded from an immutable published run. New world authoring stays on the operator laptop.':'World authoring runs on the connected operator laptop.'}:{})}});}
   private fail(error:unknown){let message=error instanceof Error?error.message:'Operation failed.';
     const structured=/Uncaught ConvexError: (\{[^\n]+\})/.exec(message);if(structured){try{message=JSON.parse(structured[1]!).message||message;}catch{}}
     for(const secret of [this.local?.localToken,this.local?.bootstrap?.ownerToken,this.local?.bootstrap?.controllerToken,this.controllerToken])if(secret)message=message.split(secret).join('[redacted]');
@@ -46,16 +48,22 @@ export class RuntimeStore {
   private offline=()=>this.patch({connection:'offline'});private online=()=>this.patch({connection:'connecting'});
   private onNavigation=()=>{this.patch({route:routeFromPath(location.pathname)});void this.openRoute();};
   private async openRoute(){const epoch=++this.routeEpoch;this.unsubscribe?.();this.unsubscribe=null;const route=this.state.route;
-    if(route.kind==='report'){this.patch({reportLoading:true,report:null,capabilities:{authoring:false,run:false,publish:false}});
+    if(route.kind==='report'){this.publicDemo=false;this.patch({mode:'live',reportLoading:true,report:null,capabilities:{authoring:false,run:false,publish:false}});
       this.unsubscribe=this.client!.onUpdate(api.reports.get,{reportId:route.reportId},result=>{this.patch({connection:'connected',reportLoading:false,report:result as ReportSnapshot|null,status:result?'published':'empty',stageLabel:result?null:'Report not found.'});},e=>{this.patch({reportLoading:false});this.fail(e);});return;}
     if(route.kind==='controller'){
+      this.publicDemo=false;this.patch({mode:'live'});
       const key=`blindspot-control:${route.sessionId}`,fragment=new URLSearchParams(location.hash.slice(1)).get('token');
       if(fragment){sessionStorage.setItem(key,fragment);history.replaceState(null,'',location.pathname);}this.controllerToken=sessionStorage.getItem(key)||'';
       this.subscribeSession(route.sessionId);this.deriveCapabilities();return;
     }
     if(route.kind!=='workspace')return;
     const isOperator=import.meta.env.VITE_AUTHORING_ENABLED==='true'&&['localhost','127.0.0.1','[::1]'].includes(location.hostname);
-    if(!isOperator){this.patch({connection:'connected',stageLabel:'Open a shared controller or report link. The operator workspace runs on its local laptop.'});return;}
+    if(!isOperator){this.publicDemo=true;this.publicDemoAutostarted=false;this.lastEvaluation=null;this.patch({mode:'recording',connection:'connecting',status:'empty',stageLabel:'Loading the published judge demo…'});
+      try{const report=await this.client!.query(api.reports.get,{reportId:demoReportId()}) as ReportSnapshot|null;if(this.disposed||epoch!==this.routeEpoch)return;if(!report)throw new Error('The published judge demo could not be found.');
+        const scenario=report.scenario;this.patch({mode:'recording',connection:'connected',world:scenario.world,scenario,library:scenario.hazards.map(h=>h.libraryItem),config:report.run.config,latestRun:report.run,report,
+          reportUrl:publicLink(`/reports/${report.id}`),status:'ready',frame:null,stageLabel:'Published scenario loaded. Replaying the evaluation in this browser.'});this.deriveCapabilities();
+      }catch(e){if(this.disposed||epoch!==this.routeEpoch)return;this.fail(e);}return;}
+    this.publicDemo=false;
     try{const local=await this.localFetch<LocalSession>('session');if(this.disposed||epoch!==this.routeEpoch)return;this.local=local;
       if(local.bootstrap)this.subscribeSession(local.bootstrap.sessionId);
       else if(local.world){const scenario=createScenario(local.world,local.bulk||AUTHORED_BULK_HAZARD);this.patch({mode:'fixture',connection:'connected',world:local.world,scenario,library:scenario.hazards.map(h=>h.libraryItem),config:createSensorConfig('baseline'),status:local.world.calibration.status==='verified'?'ready':'calibrating',stageLabel:'Cached Marble and Mint rover loaded. Seed the operator session to enable persistence.'});}
@@ -72,7 +80,7 @@ export class RuntimeStore {
   },e=>this.fail(e));}
   private updateOnline(){if(this.client&&!navigator.onLine)this.patch({connection:'offline'});else if(this.client)this.patch({connection:this.client.connectionState().isWebSocketConnected?'connected':'connecting'});if(this.state.session)this.patch({session:{...this.state.session,operatorOnline:this.leaseExpiresAt>Date.now()&&this.state.connection!=='offline'}});}
   attachScene(scene:WorldScene|null){this.scene=scene;this.deriveCapabilities();}
-  sceneReady(){this.deriveCapabilities();void this.operatorTick();}
+  sceneReady(){this.deriveCapabilities();if(this.publicDemo&&!this.publicDemoAutostarted){this.publicDemoAutostarted=true;void this.actions.startRun();return;}void this.operatorTick();}
   getScene(){return this.scene;}
   openLocalControllerTest(){
     if(!import.meta.env.DEV||!this.local?.bootstrap||!['localhost','127.0.0.1'].includes(location.hostname))return;
@@ -152,7 +160,8 @@ export class RuntimeStore {
       this.patch({world:scenario.world,scenario,status:'ready',stageLabel:'Estimated scale confirmed. Reconstruction remains approximate.'});
     }),
     requestConfig:presetId=>this.operation(async()=>{
-      if(!this.state.session){if(!this.local)throw new Error('Session unavailable.');this.patch({config:createSensorConfig(presetId,(this.state.config?.version||0)+1),latestRun:null});return;}
+      if(!this.state.session){if(!this.local&&!this.publicDemo)throw new Error('Session unavailable.');const config=createSensorConfig(presetId,(this.state.config?.version||0)+1);
+        this.patch({config,status:'ready',...(this.publicDemo?{}:{latestRun:null})});return;}
       const token=this.state.route.kind==='controller'?this.controllerToken:this.local?.bootstrap?.ownerToken;
       if(!token)throw new Error('A valid controller capability is required.');
       await this.client!.mutation(api.configs.request,{sessionId:this.state.session.id,token,presetId,clientRequestId:crypto.randomUUID()});this.patch({status:'queued'});
@@ -162,7 +171,7 @@ export class RuntimeStore {
       // The 5 s heartbeat briefly holds `busy` while it polls for queued work; a click in that window must queue, not fail.
       if(this.local?.bootstrap){if(!this.busy&&!this.state.capabilities.run)throw new Error('Load the scene and confirm calibration before running.');const requested=await this.actions.requestConfig(this.state.config.presetId);if(!requested.ok)throw new Error(requested.error.message);await this.operatorTick();return;}
       if(this.busy||!this.state.capabilities.run)throw new Error('Load the scene and confirm calibration before running.');
-      this.busy=true;this.patch({status:'running'});this.deriveCapabilities();try{const result=await this.scene.run(this.state.config,`local-${crypto.randomUUID()}`,this.frame);this.lastEvaluation=result;this.scene.setEvents(result.run.events);this.patch({latestRun:result.run,status:'ready',stageLabel:'Local development run. Persistence requires a seeded live session.',frame:this.state.frame?{...this.state.frame,playback:'finished'}:null});}finally{this.busy=false;}
+      this.busy=true;this.patch({status:'running'});this.deriveCapabilities();try{const result=await this.scene.run(this.state.config,`${this.publicDemo?'demo':'local'}-${crypto.randomUUID()}`,this.frame);this.lastEvaluation=result;this.scene.setEvents(result.run.events);this.patch({latestRun:result.run,status:'ready',stageLabel:this.publicDemo?'Judge demo replay completed in this browser. Open the immutable report for the published result.':'Local development run. Persistence requires a seeded live session.',frame:this.state.frame?{...this.state.frame,playback:'finished'}:null});}finally{this.busy=false;}
     }),
     publishReport:()=>this.operation(async()=>{if(!this.local?.bootstrap||!this.state.latestRun)throw new Error('A completed live run is required.');if(!publicLink('/'))throw new Error('Public app origin is not configured.');
       if(this.state.latestRun.config.version!==this.state.session?.requestedConfigVersion)throw new Error('Wait for the selected sensor configuration to finish.');this.patch({status:'publishing'});

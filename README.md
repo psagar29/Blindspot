@@ -164,7 +164,7 @@ The simulation runs **once**, on the operator laptop. Convex holds state, live s
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Operator workspace. On a public deployment with authoring disabled, shows read-only session guidance — never an unauthenticated generation button. |
+| `/` | Operator workspace locally. On the public deployment, preloads the immutable release scenario and durable assets as a judge demo, then replays the client-side evaluation without exposing authoring or publishing credentials. |
 | `/control/:sessionId#token=…` | Lightweight phone controller. The fragment token is read once and held privately, validated server-side, and never forwarded into report URLs or analytics. |
 | `/reports/:reportId` | Public immutable report. No owner or controller credentials, no engine load. |
 
@@ -317,6 +317,7 @@ Open `http://localhost:5173`. Authoring and simulation remain on this operator l
 ```bash
 VITE_AUTHORING_ENABLED=false \
 VITE_CONVEX_URL=https://standing-pony-711.convex.cloud \
+VITE_DEMO_REPORT_ID=c95256fa-abb3-4e16-afab-36c06c7c8869 \
 VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site \
   npm run build
 ```
@@ -342,6 +343,7 @@ export BLINDSPOT_ENV_FILE=/absolute/private/path/Blindspot.env
 | `VITE_CONVEX_URL` | Browser | Public configuration; the `.convex.cloud` URL |
 | `VITE_PUBLIC_APP_ORIGIN` | Browser | Public — deployed HTTPS origin for QR and report links |
 | `VITE_AUTHORING_ENABLED` | Browser | Public — `false` on the public controller/report deployment |
+| `VITE_DEMO_REPORT_ID` | Browser | Public — immutable report used to preload the hosted judge demo |
 | `PROVIDER_PORT` | Local provider service | Local, default `8788` |
 
 **The credential boundary is binding.** Provider keys remain in a local Node process on the operator's laptop, which listens on loopback and is proxied through Vite at `/api/local/*` with Origin and Host validation and a per-launch local session token. Keys do not move into Convex environment variables, cloud hosting settings, GitHub Secrets, or remote MCP configuration. Only `VITE_*` variables reach the browser bundle, and none of them is a secret. The public phone and report app never receives provider keys and cannot create provider tasks.

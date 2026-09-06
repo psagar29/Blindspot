@@ -107,9 +107,10 @@ export function SensorDrawer(props: RuntimeBridge & { open: boolean; onClose: ()
           </div>
         </div>
       ) : (
-        <InfoCallout title="Sharing disabled">
-          Set VITE_PUBLIC_APP_ORIGIN to the deployed HTTPS origin and restart to generate controller and report links.
-          Localhost is never the public share origin.
+        <InfoCallout title={state.mode === "recording" ? "Phone controller requires the operator" : "Sharing disabled"}>
+          {state.mode === "recording"
+            ? "This public judge demo replays in the current browser. Start the private operator session to pair a phone controller."
+            : "Set VITE_PUBLIC_APP_ORIGIN to the deployed HTTPS origin and restart to generate controller and report links. Localhost is never the public share origin."}
         </InfoCallout>
       )}
       {state.reportUrl ? (
