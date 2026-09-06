@@ -27,6 +27,7 @@ Built for the [Spatial Intelligence + Generative 3D Hackathon](https://luma.com/
 ## Table of contents
 
 - [Status](#status)
+- [For AI agents and reviewers](#for-ai-agents-and-reviewers)
 - [Problem statement](#problem-statement)
 - [Solution](#solution)
 - [How it works](#how-it-works)
@@ -70,6 +71,25 @@ node scripts/check-plan.mjs
 This checks required documents, relative links, contract symbols, and the blank credentials template. The full runtime verification commands are listed below.
 
 Where the v2 product brief and the [technical notes](docs/TECHNICAL-NOTES.md) disagree, the verified corrections in the technical notes take precedence over the brief's unsupported numerical or API claims.
+
+---
+
+## For AI agents and reviewers
+
+If you are a coding agent, a judge with a script, or a reviewer who wants the facts without the prose, start with [llms.txt](llms.txt). It maps the repository, names the files where each claim is implemented, and lists the commands that verify them.
+
+Everything the product asserts is available as data, not only as pixels:
+
+| Want | Where |
+| --- | --- |
+| The contract every number obeys | [shared/contracts.ts](shared/contracts.ts) (`CoverageMetrics`, `HazardFinding`, `ReportSnapshot`) |
+| The simulation, with no rendering attached | [src/engine/evaluate.ts](src/engine/evaluate.ts), [src/engine/sensor.ts](src/engine/sensor.ts); 38 deterministic tests via `npm test` |
+| A published report as JSON | `POST https://standing-pony-711.convex.cloud/api/query` with body `{"path":"reports:get","args":{"reportId":"c95256fa-abb3-4e16-afab-36c06c7c8869"},"format":"json"}` |
+| Live session status without any capability | Same endpoint, `"path":"sessions:getPublic"`, `"args":{"sessionId":"…"}`; owner and controller tokens are never returned |
+| Asset provenance and checksums | [public/demo/world.json](public/demo/world.json) (Marble), [public/mint/PROVENANCE.json](public/mint/PROVENANCE.json) (Mint) |
+| Independent verifier for a report and its durable assets | `npm --prefix services/provider run verify:report` |
+
+Two rules make the data trustworthy for an automated reader: a null is always rendered as *Not evaluated* (never zero), and a percentage is withheld whenever any encounter is unknown. If you find a number without a denominator, that is a bug; open an issue.
 
 ---
 

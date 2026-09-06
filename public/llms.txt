@@ -1,0 +1,55 @@
+# Blindspot
+
+> Blindspot turns a site photograph into a generated 3D world (World Labs Marble), drives a ground robot through it under an explicitly declared passive-stereo sensor model, and publishes an immutable Site Blind Spot Report: which hazard was missed, at what range, under which assumptions, with a denominator on every number. It identifies modeled blind spots. It does not certify safety.
+
+Built at the Spatial Intelligence + Generative 3D Hackathon (San Francisco, 2026-09-05), track Physical AI & Simulation. Stack: Vite, React 19, strict TypeScript, Three.js + React Three Fiber + SparkJS (splats), Convex (state, live phone controller, immutable reports), a loopback Node provider service that owns every paid API call, and a Mint-generated rover GLB.
+
+## Start here
+
+- [README](README.md): problem, solution, measurement model, verification table, getting started.
+- [PRODUCT.md](PRODUCT.md): purpose, users, positioning, principles, claim boundary.
+- [shared/contracts.ts](shared/contracts.ts): the frozen serializable contract v1 (World, Scenario, SensorConfig, CompletedRun, ReportSnapshot). Read this before reading any component.
+- [docs/CONTRACTS.md](docs/CONTRACTS.md): routes, actions, local HTTP and Convex contracts, metric rules.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): runtime topology, geometry and sensor pipeline, Convex data model, credential boundary.
+- [docs/TECHNICAL-NOTES.md](docs/TECHNICAL-NOTES.md): derivations and sources for the sensor math.
+- [AGENTS.md](AGENTS.md): how the repository was built by three roles and the hard rules every contributor keeps.
+
+## Where the logic lives
+
+- `src/engine/evaluate.ts`: diagnostic full-route pass (coverage denominator) and reactive pass (latency, finite braking, swept collision). Pure, testable, no rendering.
+- `src/engine/sensor.ts`: intrinsics from raster and FOV, projection, back-projection, thin-target width threshold `dCrit = fx * diameter / minPixels`.
+- `src/engine/depth.ts`: GPU depth and object-ID pass at the declared sensor raster, read back and back-projected.
+- `src/engine/scene.ts`: the split truth / perception scene, environment collider clearance, event markers.
+- `src/runtime/store.ts`: Convex subscription, operator lease, run claim, publish, playback.
+- `convex/`: sessions, configs, runs, reports (immutable snapshots), asset digests, capability hashes.
+- `services/provider/`: loopback provider service and CLI (preflight, cache restore, seed, verify-report).
+
+## Machine-readable data
+
+Published reports are public, immutable, and capability-free. Read one as JSON without a browser:
+
+    curl -s -X POST https://standing-pony-711.convex.cloud/api/query \
+      -H 'Content-Type: application/json' \
+      -d '{"path":"reports:get","args":{"reportId":"c95256fa-abb3-4e16-afab-36c06c7c8869"},"format":"json"}'
+
+The `value` field is a `ReportSnapshot` from `shared/contracts.ts`: scenario, sensor config, coverage with denominators, per-hazard findings (first detection range, theoretical threshold, required stopping distance, reason), limitations, and the claim boundary. Live session status is readable the same way via `sessions:getPublic` with `{"sessionId": "..."}`; it never returns owner or controller capabilities.
+
+Human-readable copies: https://blindspot-site-review.sagarpranav000.chatgpt.site/reports/<reportId>
+
+## Verify it yourself
+
+    node scripts/check-plan.mjs
+    npm ci && npm run typecheck && npm test
+    npm --prefix services/provider ci && npm --prefix services/provider test
+    npm --prefix services/provider run cache:restore   # restores the Marble world from checksums, zero paid calls
+
+## Reading the numbers
+
+- Coverage = detectedBeforeBoundary / eligible, from the diagnostic pass. Misses stay in the denominator. Any unknown encounter makes the percentage null and the report `incomplete`.
+- False-stop rate = falseStops / stopEvents, from the reactive pass. Zero stops is `null` ("No stop events"), never 0%.
+- Report status precedence: incomplete, then blind_spot_observed, then no_failure_observed. There is no fourth, greener state.
+- Hazards are authored stress tests unless `observedInPhoto` is true. The Mint rover mesh is decorative; the platform radius and height define the collision envelope.
+
+## Claim boundary
+
+This report identifies blind spots under the stated simulation assumptions. It does not certify safety. No failure observed does not mean no failure exists.
