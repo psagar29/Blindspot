@@ -90,7 +90,7 @@ export class RuntimeStore {
       const started=performance.now();
       const result=await scene.run(claimed.config as unknown as SensorConfig,claimed.runId,this.frame);
       const completion=await this.client.mutation(api.runs.complete,wire({runId:claimed.runId,token:auth.token,instanceId:this.instanceId,scenarioVersion:claimed.scenario.version,configVersion:claimed.config.version,result:result.run,brakingDecision:result.brakingDecision}));
-      if(completion.acceptedForDisplay){this.lastEvaluation=result;const final=result.frames.at(-1);if(final){scene.setFrame(final);this.frame(final);}
+      if(completion.acceptedForDisplay){this.lastEvaluation=result;scene.setEvents(result.run.events);const final=result.frames.at(-1);if(final){scene.setFrame(final);this.frame(final);}
         this.patch({status:'ready',frame:this.state.frame?{...this.state.frame,playback:'finished'}:null,stageLabel:null,elapsedMs:Math.round(performance.now()-started)});
       }else this.patch({status:'queued',stageLabel:'A newer configuration is queued. Previous result retained.'});
     }catch(e){this.fail(e);}finally{this.busy=false;this.deriveCapabilities();}}
@@ -158,9 +158,11 @@ export class RuntimeStore {
       await this.client!.mutation(api.configs.request,{sessionId:this.state.session.id,token,presetId,clientRequestId:crypto.randomUUID()});this.patch({status:'queued'});
     }),
     startRun:()=>this.operation(async()=>{
-      if(this.busy||!this.state.capabilities.run||!this.scene||!this.state.config)throw new Error('Load the scene and confirm calibration before running.');
-      if(this.local?.bootstrap){const requested=await this.actions.requestConfig(this.state.config.presetId);if(!requested.ok)throw new Error(requested.error.message);await this.operatorTick();return;}
-      this.busy=true;this.patch({status:'running'});this.deriveCapabilities();try{const result=await this.scene.run(this.state.config,`local-${crypto.randomUUID()}`,this.frame);this.lastEvaluation=result;this.patch({latestRun:result.run,status:'ready',stageLabel:'Local development run. Persistence requires a seeded live session.',frame:this.state.frame?{...this.state.frame,playback:'finished'}:null});}finally{this.busy=false;}
+      if(!this.scene||!this.state.config)throw new Error('Load the scene and confirm calibration before running.');
+      // The 5 s heartbeat briefly holds `busy` while it polls for queued work; a click in that window must queue, not fail.
+      if(this.local?.bootstrap){if(!this.busy&&!this.state.capabilities.run)throw new Error('Load the scene and confirm calibration before running.');const requested=await this.actions.requestConfig(this.state.config.presetId);if(!requested.ok)throw new Error(requested.error.message);await this.operatorTick();return;}
+      if(this.busy||!this.state.capabilities.run)throw new Error('Load the scene and confirm calibration before running.');
+      this.busy=true;this.patch({status:'running'});this.deriveCapabilities();try{const result=await this.scene.run(this.state.config,`local-${crypto.randomUUID()}`,this.frame);this.lastEvaluation=result;this.scene.setEvents(result.run.events);this.patch({latestRun:result.run,status:'ready',stageLabel:'Local development run. Persistence requires a seeded live session.',frame:this.state.frame?{...this.state.frame,playback:'finished'}:null});}finally{this.busy=false;}
     }),
     publishReport:()=>this.operation(async()=>{if(!this.local?.bootstrap||!this.state.latestRun)throw new Error('A completed live run is required.');if(!publicLink('/'))throw new Error('Public app origin is not configured.');
       if(this.state.latestRun.config.version!==this.state.session?.requestedConfigVersion)throw new Error('Wait for the selected sensor configuration to finish.');this.patch({status:'publishing'});
