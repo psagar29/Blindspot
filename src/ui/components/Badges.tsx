@@ -41,14 +41,12 @@ export function ModeBadge({ mode }: { mode: AppState["mode"] }) {
   return <Badge tone={tone}>{MODE_LABEL[mode]}</Badge>;
 }
 
-/** Full-width stripe so fixture/recorded sessions are unmistakable. */
+/** Full-width stripe so development fixture data is unmistakable. */
 export function ModeBanner({ mode }: { mode: AppState["mode"] }) {
-  if (mode === "live") return null;
+  if (mode !== "fixture") return null;
   return (
     <div className="bs-mode-banner" role="note">
-      {mode === "fixture"
-        ? "Fixture data: deterministic sample state for UI development, not a live run."
-        : "Judge demo: published scenario and durable assets. Replays run in this browser and do not alter the immutable report."}
+      Fixture data: deterministic sample state for UI development, not a live run.
     </div>
   );
 }
