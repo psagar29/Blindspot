@@ -2,17 +2,26 @@ import type { RuntimeBridge } from "../../../shared/contracts";
 import { fmtClock, fmtSeconds, fmtSpeed } from "../format";
 import { Badge } from "../components/Badges";
 
-/** UI-side capability probe; presentation only. B's viewport owns real GL setup. */
+/** UI-side capability probe; presentation only. B's viewport owns real GL setup.
+ * Probed once per page: every probe allocates a WebGL context, and browsers cap live
+ * contexts per page (Chrome: 16, oldest evicted). Re-probing on each render during a
+ * run evicted the live viewport context within two seconds. */
+let probedSupport: boolean | null = null;
 export function webglSupported(): boolean {
   if (typeof window !== "undefined" && (window as { __BLINDSPOT_FORCE_NO_WEBGL?: boolean }).__BLINDSPOT_FORCE_NO_WEBGL) {
     return false;
   }
-  try {
-    const canvas = document.createElement("canvas");
-    return Boolean(canvas.getContext("webgl2") ?? canvas.getContext("webgl"));
-  } catch {
-    return false;
+  if (probedSupport === null) {
+    try {
+      const canvas = document.createElement("canvas");
+      const gl = canvas.getContext("webgl2") ?? canvas.getContext("webgl");
+      probedSupport = Boolean(gl);
+      (gl as WebGLRenderingContext | null)?.getExtension("WEBGL_lose_context")?.loseContext();
+    } catch {
+      probedSupport = false;
+    }
   }
+  return probedSupport;
 }
 
 function ViewportState(props: { title: string; body?: string; children?: React.ReactNode; photoUrl?: string }) {
