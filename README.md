@@ -40,7 +40,7 @@ Built for the [Spatial Intelligence + Generative 3D Hackathon](https://luma.com/
 - [Configuration and secrets](#configuration-and-secrets)
 - [Scope](#scope)
 - [Verification](#verification)
-- [Demo and event](#demo-and-event)
+- [Event](#event)
 - [Documentation index](#documentation-index)
 - [Known limits](#known-limits)
 - [License and attribution](#license-and-attribution)
@@ -168,7 +168,7 @@ The simulation runs **once**, on the operator laptop. Convex holds state, live s
 | `/control/:sessionId#token=…` | Lightweight phone controller. The fragment token is read once and held privately, validated server-side, and never forwarded into report URLs or analytics. |
 | `/reports/:reportId` | Public immutable report. No owner or controller credentials, no engine load. |
 
-**Module boundary.** A owns presentational React (`src/ui/**`) and fixtures; B owns the complete runtime adapter (`RuntimeRoot`, `useBlindspot`, `BlindspotViewport`), Convex integration, simulation, and provider client; C composes them in roughly 20–40 lines. Shared types are plain serializable TypeScript with no React or Convex imports. Full behavior and ownership rules: [docs/CONTRACTS.md](docs/CONTRACTS.md); topology and Convex data model: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+**Module boundary.** Presentational React (`src/ui/**`) and its fixtures remain separate from the runtime adapter (`RuntimeRoot`, `useBlindspot`, `BlindspotViewport`), Convex integration, simulation, and provider client. The production entry composes both halves against the same unchanged contract. Shared types are plain serializable TypeScript with no React or Convex imports. Full behavior rules: [docs/CONTRACTS.md](docs/CONTRACTS.md); topology and Convex data model: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 **Concurrency and integrity.** One operator holds a short renewable lease. A queued config is claimed atomically on `session + configVersion`; runs carry a stable idempotency key. A config never mutates a running run's snapshot, and an old result can never be displayed under a newer config version — the UI shows "queued" until the matching result exists. Publishing is idempotent by run ID. An expired lease or offline operator reads "Waiting for operator," never a fabricated completion.
 
@@ -178,12 +178,12 @@ The simulation runs **once**, on the operator laptop. Convex holds state, live s
 
 Three technology integrations are proven in the release. Tripo remains an event sponsor but is deliberately not part of the shipped application.
 
-| Sponsor | Actual contribution | Owner | Proof required | Honest limit |
-| --- | --- | --- | --- | --- |
-| **[World Labs](https://worldlabs.ai/)** — Marble | The demo world itself: SPZ splat appearance, collider geometry, and metric scale metadata, generated from the prepared text prompt and cached before the demo | B | World / operation ID, sanitized manifest, cached files, visible scene with an aligned collider | The release world is generated rather than a real venue survey. Generation is asynchronous and typically takes minutes |
-| **[Mint](https://mint.gg/)** | The robot body: a real GLB created through the Mint MCP workflow, imported into the 3D scene, and copied into durable report storage with sanitized provenance | A; C integrates | Mint task `ks74ch8bya740cjkcz9zp55adx8dtnmn`, imported GLB, checksum, visible rover | The decorative mesh never defines the physical robot envelope |
-| **[Convex](https://convex.dev/)** | Shared hazard library, live phone configuration and status, versioned run results, capability rotation, and the durable immutable report | B; C verifies release | A second browser queued config v5, the operator completed it, and the unauthenticated report verifier fetched every durable asset | Convex does not execute the GPU simulation and never stores provider credentials |
-| **Founders, Inc. Events** | Presenter, venue, and community | C | Correct event attribution | No invented Founders API integration |
+| Sponsor | Actual contribution | Proof | Honest limit |
+| --- | --- | --- | --- |
+| **[World Labs](https://worldlabs.ai/)** — Marble | The demo world itself: SPZ splat appearance, collider geometry, and metric scale metadata, generated from the prepared text prompt and cached before the demo | World / operation ID, sanitized manifest, cached files, visible scene with an aligned collider | The release world is generated rather than a real venue survey. Generation is asynchronous and typically takes minutes |
+| **[Mint](https://mint.gg/)** | The robot body: a real GLB created through the Mint MCP workflow, imported into the 3D scene, and copied into durable report storage with sanitized provenance | Mint task `ks74ch8bya740cjkcz9zp55adx8dtnmn`, imported GLB, checksum, visible rover | The decorative mesh never defines the physical robot envelope |
+| **[Convex](https://convex.dev/)** | Shared hazard library, live phone configuration and status, versioned run results, capability rotation, and the durable immutable report | A second browser queued config v5, the operator completed it, and the unauthenticated report verifier fetched every durable asset | Convex does not execute the GPU simulation and never stores provider credentials |
+| **Founders, Inc. Events** | Presenter, venue, and community | Correct event attribution | No invented Founders API integration |
 
 **Integration boundaries.** Marble and Mint keep separate attribution and provenance. Every claimed integration is accompanied by a real task or model ID. The procedural bulk control is never presented as generated, photo-observed, or physically measured.
 
@@ -262,7 +262,6 @@ Full specification: [DESIGN.md](DESIGN.md).
 ├── docs/                      Product, architecture, runbooks, evidence, handoffs
 └── scripts/check-plan.mjs     Dependency-free documentation/contract validator
 ```
-
 ---
 
 ## Getting started
@@ -286,6 +285,8 @@ npm --prefix services/provider run preflight
 ```
 
 ### Start the live operator
+
+`services/provider/` keeps its own package and lockfile, so the two dependency sets never collide. `cache:restore` reuses the completed Marble job rather than generating a new world. Fresh generation is a deliberate, budgeted operator action (`cache:demo -- --generate`), not something a checkout does on its own.
 
 The reproducible release uses the cached Marble world, the real Mint rover asset, and an explicitly authored procedural bulk control:
 
@@ -320,7 +321,7 @@ VITE_PUBLIC_APP_ORIGIN=https://blindspot-site-review.sagarpranav000.chatgpt.site
   npm run build
 ```
 
-`dist/` is a static SPA; hosting must fall back unknown paths to `index.html` so direct `/control/:sessionId` and `/reports/:reportId` loads work. The role briefs and handoffs remain under `docs/` as implementation history. The release lives on `master`; the planning baseline is preserved on `main`. The temporary Person A/B remote branches are intentionally removed after their exact tips are proven ancestors of `master`, and no remote `person-c` branch is created.
+`dist/` is a static SPA; hosting must fall back unknown paths to `index.html` so direct `/control/:sessionId` and `/reports/:reportId` loads work. The role briefs and handoffs remain under `docs/` as implementation history. The complete release lives on the single canonical `master` branch; temporary integration branches are removed only after their exact tips are proven ancestors of `master`.
 
 ---
 
@@ -398,11 +399,9 @@ The browser flow uses real Convex synchronization and client-computed simulation
 
 ---
 
-## Demo and event
+## Event
 
-**Event.** [Spatial Intelligence + Generative 3D Hackathon](https://luma.com/b101ml40), September 5, 2026, San Francisco, presented by Founders, Inc. Events with World Labs, Tripo, mint.gg, and Convex. Published hacking starts at 10:00 PDT, submissions close at 18:00, and demos are two minutes per team. Track: **Physical AI & Simulation**. Team cap, prior-work eligibility, the exact rubric, and the submission form are not published — the listing assigns rules to the onsite briefing, and C confirms them in the room rather than assuming them here.
-
-**Two-minute script.** Problem statement → generated source image and cached world with visible scale source → sentence authoring with three hazards and one quantitative justification → the split view, where the cable is missed or seen too late, held for three seconds → a phone preset change producing a queued then completed version with real coverage and false-stop figures → the public Site Blind Spot Report with one hazard's diameter, range, reason, and denominator → the claim boundary. Full beat-by-beat runbook and prepared judge answers: [docs/DEMO.md](docs/DEMO.md).
+[Spatial Intelligence + Generative 3D Hackathon](https://luma.com/b101ml40), September 5, 2026, San Francisco, presented by Founders, Inc. Events with World Labs, Tripo, mint.gg, and Convex. Published hacking starts at 10:00 PDT and submissions close at 18:00. Track: **Physical AI & Simulation**. Team cap, prior-work eligibility, the exact rubric, and the submission form are not published — the listing assigns those rules to the onsite briefing.
 
 **Fallback order.** Real cached run → visibly labeled recorded playback → backup video plus the existing public report. A canned result is never replayed as a fresh simulation, and online status is never fabricated.
 
@@ -414,16 +413,16 @@ The browser flow uses real Convex synchronization and client-computed simulation
 | --- | --- |
 | [PRODUCT.md](PRODUCT.md) | Purpose, users, positioning, capabilities, principles, claim boundaries |
 | [DESIGN.md](DESIGN.md) | Neumorphic tokens, layout, components, states, report and polish pass |
-| [AGENTS.md](AGENTS.md) | Role execution guide, ownership boundaries, hard prohibitions |
-| [docs/BUILD-PLAN.md](docs/BUILD-PLAN.md) | Work distribution, milestones, P1 admission, cut order, merge discipline |
+| [AGENTS.md](AGENTS.md) | Implementation guide, module boundaries, hard prohibitions |
+| [docs/BUILD-PLAN.md](docs/BUILD-PLAN.md) | Milestones, P1 admission rules, cut order |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Topology, geometry pipeline, Convex model, network and credential boundary |
 | [docs/CONTRACTS.md](docs/CONTRACTS.md) | Export boundary, routes, actions, local HTTP and Convex contracts, metric rules |
 | [shared/contracts.ts](shared/contracts.ts) | Frozen TypeScript types — contract version 1 |
-| [docs/SETUP.md](docs/SETUP.md) | Access requirements, per-role setup, what can finish without external access |
+| [docs/SETUP.md](docs/SETUP.md) | Access requirements, local setup, what can finish without external access |
 | [docs/EVENT-SPONSORS.md](docs/EVENT-SPONSORS.md) | Verified event facts, sponsor contributions, proof requirements |
 | [docs/TECHNICAL-NOTES.md](docs/TECHNICAL-NOTES.md) | Verified API corrections and sensor math with primary sources |
-| [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md) | Per-role acceptance gates, evidence rules, ready definitions |
-| [docs/DEMO.md](docs/DEMO.md) | Demo script, prepared answers, submission package |
+| [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md) | Acceptance gates, evidence rules, ready definitions |
+| [docs/DEMO.md](docs/DEMO.md) | Presentation runbook, prepared answers, submission package |
 
 ---
 
